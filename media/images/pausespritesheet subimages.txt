@@ -1,0 +1,4 @@
+pause.png:0:0:64:64
+play.png:64:0:64:64
+fforward.png:128:0:64:64
+back.png:192:0:64:64

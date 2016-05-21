@@ -1,0 +1,8 @@
+uniform sampler2D texture0;
+uniform vec4 agk_MeshDiffuse;
+varying vec2 uvVarying;
+ 
+void main()
+{
+    gl_FragColor = (texture2D(texture0, uvVarying) * agk_MeshDiffuse);
+}

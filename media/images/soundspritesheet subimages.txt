@@ -1,0 +1,2 @@
+soundoff.png:0:0:64:64
+soundon.png:64:0:64:64

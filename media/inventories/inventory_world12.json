@@ -1,0 +1,42 @@
+[
+	"armygun" : {
+		"category":"gun",
+		"seqNum":"21",
+		"ammo":"500",
+		"atlas":"inventory",
+		"available":"0",
+		"range":"400",
+		"trajectory":"straight",
+		"yStep":"0",
+		"speed":"5"
+	}
+	"knife" : {
+		"category":"knife",
+		"seqNum":"24",
+		"atlas":"inventory",
+		"ammo":"1",
+		"available":"1",
+		"range":"10",
+		"trajectory":"straight",
+		"yStep":"0",
+		"speed":"1"
+	},
+	"life" : {
+		"category":"life",
+		"seqNum":"35",
+		"atlas":"inventory",
+		"ammo":"200",
+		"available":"1"
+	},
+	"medikit" : {
+		"category":"medikit",
+		"seqNum":"31",
+		"atlas":"inventory",
+		"ammo":"0",
+		"available":"1"
+	}
+]
+		
+		
+		
+		
