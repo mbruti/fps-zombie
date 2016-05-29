@@ -271,7 +271,7 @@ function endLevel()
 	remainingLifeText=printText(SCREEN2D_WIDTH/2,SCREEN2D_HEIGHT/2-150,"",48,1)
 	alpha_text=150
 	SetTextColor(remainingLifeText,0,192,192,255)
-	PlayMusic(fightSceneMusic,1)
+	PlayMusic(getMusicByName("fightscene"),1)
 	radius=min2(SCREEN2D_WIDTH/2, SCREEN2D_HEIGHT/2)-64
 	now as float
 	for i=1 to radius
@@ -294,7 +294,7 @@ function endLevel()
 		SetTextColorAlpha(remainingLifeText,alpha_text)
 		inc alpha_text,5
 		if (alpha_text>250) then alpha_text=150
-		if (mod(i,10)=0) then PlaySound(clingSound)
+		if (mod(i,10)=0) then PlaySound(getSoundByName("cling"))
 		sync()
 	next i	
 	alpha_text=150
@@ -309,7 +309,7 @@ function endLevel()
 		SetTextColorAlpha(remainingTimeText,alpha_text)
 		inc alpha_text,5
 		if (alpha_text>250) then alpha_text=150
-		if (mod(i,10)=0) then PlaySound(clingSound)
+		if (mod(i,10)=0) then PlaySound(getSoundByName("cling"))
 		sync()
 	next i
 	if (numShoots=0) then numShoots=1000000
@@ -324,7 +324,7 @@ function endLevel()
 		SetTextColorAlpha(accuracyStatText,alpha_text)
 		inc alpha_text,5
 		if (alpha_text>250) then alpha_text=150
-		if (mod(i,10)=0) then PlaySound(clingSound)
+		if (mod(i,10)=0) then PlaySound(getSoundByName("cling"))
 		sync()
 	next i
 	if (accuracyStat>=90) 
@@ -350,7 +350,8 @@ function endLevel()
 		//DrawEllipse(SCREEN2D_WIDTH/2,SCREEN2D_HEIGHT/2,radius,radius,MakeColor(255,0,0),MakeColor(0,0,0),1)
 		sync()
 	until ((Timer()-now)>5)			
-	StopMusic()
+	stopLoopingSounds(1)
+	loadSounds()
 	DeleteAllText()
 	DeleteSprite(redcircleSpriteID)
 	//DeleteImage(redcircleImageID)

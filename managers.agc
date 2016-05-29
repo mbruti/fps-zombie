@@ -146,7 +146,7 @@ function controlManager()
 		start_jump_y=oggetti3D[fps_index].y	 	
 		end_jump_y=start_jump_y+9
 		jump_direction=0.3
-		PlaySound(jumpSound)
+		PlaySound(getSoundByName("jump"))
 	elseif (inputButton=3) and (oggetti3D[fps_index].status=STATUS_IDLE)
 		cam_angle_xy=cam_angle_xy-1
 		if (cam_angle_xy<-45) then cam_angle_xy=-45
@@ -187,7 +187,7 @@ function jumpManager()
 		elseif (jump_direction<0) and (oggetti3D[fps_index].y<=currentFloorY)
 			oggetti3D[fps_index].y=currentFloorY
 			jumping_flag=0
-			playsound(jumpDownSound)
+			playsound(getSoundByName("jumpDown"))
 			checkFallCounter()
 		endif	
 	elseif (oggetti3D[fps_index].y<currentFloorY) and (hitFloor=0)
@@ -203,7 +203,7 @@ function collisionManager()
 	if (hitFloor=1) 
 		if (jumping_flag=1) and (jump_direction<0) 
 			jumping_flag=0
-			playsound(jumpDownSound)
+			playsound(getSoundByName("jumpDown"))
 		endif		
 		checkFallCounter()
 		if (oggetti3D[fps_index].status=STATUS_CLIMBING) then oggetti3D[fps_index].status=STATUS_IDLE
@@ -215,12 +215,12 @@ function collisionManager()
 			oggetti3D[fps_index].y=oggetti3D[fps_index].y-0.3
 			inc fallCounter
 		    if 	(oggetti3D[fps_index].y<=currentFloorFPS)
-			  if (mod(frameCounter,8)=0) then playsound(footstepsSound)
+			  if (mod(frameCounter,8)=0) then playsound(getSoundByName("footsteps"))
                oggetti3D[fps_index].y=currentFloorFPS
                checkFallCounter()
 	    	endif
 	    elseif (oggetti3D[fps_index].y<currentFloorFPS) and (oggetti3D[fps_index].onObject=-1)
-			if (mod(frameCounter,8)=0) then playsound(footstepsSound)
+			if (mod(frameCounter,8)=0) then playsound(getSoundByName("footsteps"))
 		 	oggetti3D[fps_index].y=currentFloorFPS
         endif       	
 	endif	

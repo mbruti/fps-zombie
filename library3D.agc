@@ -1705,7 +1705,7 @@ function objectManager()
 					   RotateCameraLocalZ(1,-1)  
 					else
 						oggetti3D[i].status=STATUS_GAME_OVER
-						stopLoopingSounds()
+						stopLoopingSounds(0)
 						if (isMultiPlayerLAN=1)
 							isMultiPlayerLAN=0
 							CloseNetwork(networkID)
@@ -1754,7 +1754,7 @@ function objectManager()
 							if (inventory[selected_inventory_index].range<>0) and (abs(oggetti3D[i].life)>=inventory[selected_inventory_index].range)
 								if (inventory[selected_inventory_index].category=CAT_INV_BOMB) 
 									oggetti3D[i].status=STATUS_BOMB_EXPLOSION
-									PlaySound(explosionSound)
+									PlaySound(getSoundByName("explosion"))
 								else
 									oggetti3D[i].status=STATUS_ENDING
 								endif		
@@ -1917,7 +1917,7 @@ function objectManager()
 								SetObjectPosition(oggetti3D[i].targetFireID,oggetti3D[fps_index].x,oggetti3D[fps_index].y,oggetti3D[fps_index].z)
 								SetObjectCollisionMode(oggetti3D[i].targetFireID,1)
 								SetObjectVisible(oggetti3D[i].targetFireID,0)
-								playsound(ak47Sound,100,1)
+								playsound(getSoundByName("ak47"),100,1)
 							endif	
 						endcase
 						case CAT_TANK
@@ -1940,7 +1940,7 @@ function objectManager()
 								SetObjectPosition(oggetti3D[i].targetFireID,oggetti3D[fps_index].x,oggetti3D[fps_index].y,oggetti3D[fps_index].z)
 								SetObjectCollisionMode(oggetti3D[i].targetFireID,1)
 								SetObjectVisible(oggetti3D[i].targetFireID,0)
-								playsound(tankSound,100,0)
+								playsound(getSoundByName("tank"),100,0)
 							endif
 						endcase	
 						case CAT_FLYING
@@ -1955,7 +1955,7 @@ function objectManager()
 								SetObjectPosition(oggetti3D[i].targetFireID,oggetti3D[fps_index].x,oggetti3D[fps_index].y,oggetti3D[fps_index].z)
 								SetObjectCollisionMode(oggetti3D[i].targetFireID,1)
 								SetObjectVisible(oggetti3D[i].targetFireID,0)
-								playsound(laserSound,100,1)
+								playsound(getSoundByName("laser"),100,1)
 							endif	
 						endcase
 					endselect		
@@ -2024,7 +2024,7 @@ function objectManager()
 						DeleteObject(oggetti3D[i].fireObjID)
 						oggetti3D[i].fireObjID=0
 						if (oggetti3D[i].animated=1) then SetObjectAnimationSpeed(oggetti3D[i].ID,oggetti3D[i].moveStep*150)
-						StopSound(ak47Sound)
+						StopSound(getSoundByName("ak47"))
 						// PlayObjectAnimation(oggetti3D[i].ID,GetObjectAnimationName(oggetti3D[i].ID,1),0,-1,1,0)
 					endif	
 				endif	
@@ -2037,7 +2037,7 @@ function objectManager()
 						oggetti3D[i].targetFireID=0
 						DeleteObject(oggetti3D[i].fireObjID)
 						oggetti3D[i].fireObjID=0
-						StopSound(laserSound)
+						StopSound(getSoundByName("laser"))
 						// PlayObjectAnimation(oggetti3D[i].ID,GetObjectAnimationName(oggetti3D[i].ID,1),0,-1,1,0)
 					endif	
 				endif	
@@ -2064,8 +2064,8 @@ function objectManager()
 				endif		
 			endcase
 			case STATUS_TANK_START_FALLING
-				if (GetSoundsPlaying(explosionSound)=0)
-					PlaySound(explosionSound,100,1)
+				if (GetSoundsPlaying(getSoundByName("explosion"))=0)
+					PlaySound(getSoundByName("explosion"),100,1)
 				endif	
 				if (isMultiPlayerLAN=0) or (isHostLAN=1)
 					DeleteObjectWithChildren(oggetti3D[i].ID)
@@ -2087,8 +2087,8 @@ function objectManager()
 				if (isMultiPlayerLAN=1) then sendNetworkFPSUpdateStatus(networkID,i)
 			endcase
 			case STATUS_FLYING_FALLING
-				if (GetSoundsPlaying(explosionSound)=0)
-					PlaySound(explosionSound,100,1)
+				if (GetSoundsPlaying(getSoundByName("explosion"))=0)
+					PlaySound(getSoundByName("explosion"),100,1)
 				endif	
 				if (isMultiPlayerLAN=0) or (isHostLAN=1)
 					if (oggetti3D[i].fireObjID=0)
@@ -2102,7 +2102,7 @@ function objectManager()
 					positionObject3D(oggetti3D[i])
 					if (oggetti3D[i].y<=GetFloor(oggetti3D[i].x,oggetti3D[i].z,-1))
 						DeleteObject(oggetti3D[i].fireObjID)
-						stopLoopingSounds()
+						stopLoopingSounds(0)
 						oggetti3D[i].status=STATUS_ENDING
 					endif	 
 				endif	
@@ -2557,7 +2557,7 @@ function manageFPSCollision(hitObj ref as Oggetto3D)
 			if (hitObj.status=STATUS_ACTIVE) or (hitObj.status=STATUS_FIRING)
 				hitPlayer(hitObj.damage)
 				oggetti3D[hitObjIndex].hittingPlayer=1
-				manageSound(zombieSound)
+				manageSound(getSoundByName("zombie"))
 			endif	
 		endcase
 		case CAT_TANK
@@ -2594,7 +2594,9 @@ function manageFPSCollision(hitObj ref as Oggetto3D)
 						if (inventory[key_inventory_index].available=0)
 							inventory[key_inventory_index].ammo=1
 							inventory[key_inventory_index].available=1
-							setSpriteColor(inventory[key_inventory_index].spriteID,255,255,0,255)
+							if (GetSpriteExists(inventory[key_inventory_index].spriteID)=1)
+								setSpriteColor(inventory[key_inventory_index].spriteID,255,255,0,255)
+							endif	
 							hitObj.status=STATUS_ENDING	
 							if (isMultiPlayerLAN=1) then sendNetworkFPSUpdateStatus(networkID,hitObjIndex)
 						endif
@@ -2899,7 +2901,7 @@ function updateHitEnemy(hitObjIndex as integer, energyLost as integer)
 		oggetti3D[hitObjIndex].energy=0	
 		if (oggetti3D[hitObjIndex].category=CAT_ENEMY)
 			oggetti3D[hitObjIndex].status=STATUS_FALLING
-			manageSound(zombieSound)
+			manageSound(getSoundByName("zombie"))
 			score=score+100	
 			//oggetti3D[hitObjIndex].y=getFloor(oggetti3D[hitObjIndex].x,oggetti3D[hitObjIndex].z)
 			//positionObject3D(oggetti3D[hitObjIndex])
@@ -2987,7 +2989,7 @@ function checkBulletCollision(bulletObj ref as Oggetto3D)
 			inc numHitTargets  
 		elseif (oggetti3D[hitObjIndex].category=CAT_TANK) and (oggetti3D[hitObjIndex].status=STATUS_ACTIVE)
 			if (bulletObj.weapon="bazooka")
-				PlaySound(explosionSound)
+				PlaySound(getSoundByName("explosion"))
 				createExplosion(hitObjIndex)
 				updateHitEnemy(hitObjIndex,10)
 			else				
@@ -2997,7 +2999,7 @@ function checkBulletCollision(bulletObj ref as Oggetto3D)
 			inc numHitTargets  	 
 		elseif (oggetti3D[hitObjIndex].category=CAT_FLYING) and (oggetti3D[hitObjIndex].status=STATUS_ACTIVE)
 			if (bulletObj.weapon="bazooka")
-				PlaySound(explosionSound)
+				PlaySound(getSoundByName("explosion"))
 				createExplosion(hitObjIndex)
 				updateHitEnemy(hitObjIndex,10)
 			else				

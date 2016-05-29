@@ -18,22 +18,21 @@ FILE_14=intro.agc;-1
 FILE_15=image.agc;-1
 
 [files]
-FILE_NAME_0=1;main.agc;853;1
+FILE_NAME_0=1;main.agc;854;1
 FILE_NAME_1=0;controls.agc;768;0
-FILE_NAME_2=0;library3D.agc;103610;12
+FILE_NAME_2=0;library3D.agc;49263;11
 FILE_NAME_3=0;globals.agc;339;2
-FILE_NAME_4=0;utils.agc;12116;5
-FILE_NAME_5=0;hud.agc;3827;3
-FILE_NAME_6=0;managers.agc;7338;6
-FILE_NAME_7=0;sound.agc;192;4
-FILE_NAME_8=0;inventory3D.agc;1958;13
-FILE_NAME_9=0;menu.agc;8259;7
-FILE_NAME_10=0;network.agc;8812;8
-FILE_NAME_11=0;misc.agc;39;9
-FILE_NAME_12=0;map.agc;2590;15
-FILE_NAME_13=0;highscore.agc;6847;10
-FILE_NAME_14=0;intro.agc;2267;11
-FILE_NAME_15=0;image.agc;372;14
+FILE_NAME_4=0;utils.agc;12116;4
+FILE_NAME_5=0;managers.agc;8988;5
+FILE_NAME_6=0;sound.agc;2612;3
+FILE_NAME_7=0;inventory3D.agc;2320;12
+FILE_NAME_8=0;menu.agc;11476;6
+FILE_NAME_9=0;network.agc;8812;7
+FILE_NAME_10=0;misc.agc;39;8
+FILE_NAME_11=0;map.agc;2590;14
+FILE_NAME_12=0;highscore.agc;6847;9
+FILE_NAME_13=0;intro.agc;2267;10
+FILE_NAME_14=0;image.agc;372;13
 
 [project]
 description=
