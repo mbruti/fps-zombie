@@ -982,7 +982,9 @@ function createOggetto3D(obj ref as Oggetto3D)
 				   rem obj.lightMode=1
 			   else	   
 				   obj.ID=LoadObject(obj.objectFile,obj.height)
-			   endif	   
+			   endif	  
+			   firstCatObjID.insert(obj.ID)
+			   firstCatObjFilename.insert(obj.objectFile) 
 		   else 
 			   obj.ID=CloneObject(objectToCloneID)
 		   endif	   
@@ -993,18 +995,16 @@ function createOggetto3D(obj ref as Oggetto3D)
 					SetImageWrapV(obj.textureID,1)
 					setObjectShader(obj.ID,createTileShader(obj.tile_x,obj.tile_y)) 
 				endif	
-				if (obj.bodyBoneName<>"")
+				if (obj.bodyBoneName<>"") and (obj.animated=1)
 					SetObjectMeshImage(obj.ID,1,obj.textureID,0)
 				else	   
 					SetObjectImage(obj.ID,obj.textureID,0)
 				endif
 			endif   
-			if (obj.weaponBoneName<>"") and (obj.weaponTextureFile<>"")
+			if (obj.weaponBoneName<>"") and (obj.weaponTextureFile<>"") and (obj.animated=1)
 			   obj.weaponTextureID=LoadImage(obj.weaponTextureFile)	   	   
 			   SetObjectMeshImage(obj.ID,2,obj.weaponTextureID,0)    
 			endif
-			firstCatObjID.insert(obj.ID)
-			firstCatObjFilename.insert(obj.objectFile)
 	    endcase   
 	endselect   
 	if (obj.collision=1)
@@ -1657,6 +1657,7 @@ function objectManager()
 	forwardStep as float
 	weapon_radius as float
 	current_angle_y as float
+	to_be_y as float
 	updateObjFlag as integer
 	new_angle_y as float
 	dvx as float
@@ -1810,8 +1811,7 @@ function objectManager()
 							//print("altitudine "+str(oggetti3D[i].altitude))
 							//print("y "+str(oggetti3D[i].y))
 						endcase	
-						case default
-							
+						case default	
 							if (oggetti3D[i].onObject=-1)
 								oggetti3D[i].y=getFloor(oggetti3D[i].x,oggetti3D[i].z,i)-oggetti3D[i].base_y
 								positionObject3D(oggetti3D[i])
