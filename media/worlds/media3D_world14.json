@@ -211,7 +211,7 @@
 		"ai":"AVOID",
 		"collision":"1",
 		"flip":"1",
-    	"category":"ENEMY",
+    		"category":"ENEMY",
 		"energy":"100",
 		"infoText":"Energy",
 		"damage":"1",
@@ -250,7 +250,7 @@
 		"ai":"AVOID",
 		"collision":"1",
 		"flip":"1",
-    	"category":"ENEMY",
+    		"category":"ENEMY",
 		"energy":"100",
 		"infoText":"Energy",
 		"damage":"1",
@@ -282,7 +282,7 @@
 		"rotateStep":"0",
 		"collision":"1",
 		"flip":"1",
-    	"category":"PLAYER"
+    		"category":"PLAYER"
 	},	
 	"bullet" : {
 		"x":"0",
@@ -468,7 +468,7 @@
 		"postCHANGEROUTE":"ACTIVE",
 		"ai":"AVOID",
 		"flip":"1",
-    	"category":"TANK",
+    		"category":"TANK",
 		"energy":"250",
 		"infoText":"TANK-2",
 		"damage":"1",
@@ -477,8 +477,6 @@
 		"fireRate":"80",
 		"canFire":"1",
 		"bodyBoneName":"body",
-		"weaponBoneName":"top",
-		"weaponTextureFile":"camouflage.png",
 		"color":"255,128,0,0"
 	},
 	"tank2" : {
@@ -506,7 +504,7 @@
 		"postCHANGEROUTE":"ACTIVE",
 		"ai":"AVOID",
 		"flip":"1",
-    	"category":"TANK",
+    		"category":"TANK",
 		"energy":"250",
 		"infoText":"TANK-2",
 		"damage":"1",
@@ -515,8 +513,6 @@
 		"fireRate":"80",
 		"canFire":"1",
 		"bodyBoneName":"body",
-		"weaponBoneName":"top",
-		"weaponTextureFile":"camouflage.png",
 		"color":"255,128,0,0"
 	},
 	"tank3" : {
@@ -544,7 +540,7 @@
 		"postCHANGEROUTE":"ACTIVE",
 		"ai":"AVOID",
 		"flip":"1",
-    	"category":"TANK",
+    		"category":"TANK",
 		"energy":"200",
 		"infoText":"TANK-2",
 		"damage":"1",
@@ -553,8 +549,6 @@
 		"fireRate":"100",
 		"canFire":"1",
 		"bodyBoneName":"body",
-		"weaponBoneName":"top",
-		"weaponTextureFile":"camouflage.png",
 		"color":"128,128,128,0"
 	},
 	"tank4" : {
@@ -582,7 +576,7 @@
 		"postCHANGEROUTE":"ACTIVE",
 		"ai":"AVOID",
 		"flip":"1",
-    	"category":"TANK",
+    		"category":"TANK",
 		"energy":"200",
 		"infoText":"TANK-2",
 		"damage":"1",
@@ -591,8 +585,6 @@
 		"fireRate":"100",
 		"canFire":"1",
 		"bodyBoneName":"body",
-		"weaponBoneName":"top",
-		"weaponTextureFile":"camouflage.png",
 		"color":"128,0,128,0"
 	},
 	"ammo1" : {

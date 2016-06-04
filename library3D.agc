@@ -887,9 +887,11 @@ function checkExistingObject(objectFileName as string)
 endfunction -1		
 
 function createOggetto3D(obj ref as Oggetto3D)
+	i as integer
 	terrainShader as integer
 	terrainAGKShader as integer
 	objectToCloneID as integer
+	meshIndex as integer
 	SetFolder(OBJECTS_FOLDER)
 	select obj.objectType
 		case "box"
@@ -998,7 +1000,7 @@ function createOggetto3D(obj ref as Oggetto3D)
 				endif
 			endif   
 			if (obj.weaponBoneName<>"") and (obj.weaponTextureFile<>"")
-			   obj.weaponTextureID=LoadImage(obj.weaponTextureFile)
+			   obj.weaponTextureID=LoadImage(obj.weaponTextureFile)	   	   
 			   SetObjectMeshImage(obj.ID,2,obj.weaponTextureID,0)    
 			endif
 			firstCatObjID.insert(obj.ID)

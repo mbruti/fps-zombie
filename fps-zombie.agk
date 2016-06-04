@@ -18,11 +18,11 @@ FILE_14=intro.agc;-1
 FILE_15=image.agc;-1
 
 [files]
-FILE_NAME_0=1;main.agc;854;1
+FILE_NAME_0=0;main.agc;812;1
 FILE_NAME_1=0;controls.agc;768;0
-FILE_NAME_2=0;library3D.agc;49263;11
-FILE_NAME_3=0;globals.agc;339;2
-FILE_NAME_4=0;utils.agc;12116;4
+FILE_NAME_2=0;library3D.agc;25444;11
+FILE_NAME_3=1;globals.agc;347;2
+FILE_NAME_4=0;utils.agc;12883;4
 FILE_NAME_5=0;managers.agc;8988;5
 FILE_NAME_6=0;sound.agc;2612;3
 FILE_NAME_7=0;inventory3D.agc;2320;12

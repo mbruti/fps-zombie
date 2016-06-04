@@ -1,0 +1,18 @@
+{
+	"sound":{
+		"gunShot":"gunshot.wav",
+		"jump":"jump.wav",
+		"jumpDown":"jumpdown.wav",
+		"footsteps":"footsteps.wav",
+		"explosion":"explosion.wav",
+		"cling":"cling.wav",	
+		"swishing":"swishing.wav",
+		"ak47":"ak47.wav",
+		"zombie":"zombie.wav",
+		"tank":"tank.wav",	
+		"laser":"laser.wav"
+	},
+	"music":{
+		"fightscene":"fightscene.mp3"
+	}
+}	

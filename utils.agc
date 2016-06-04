@@ -316,7 +316,7 @@ function spriteToWorldY(spr,x#,y#)
 endfunction wy#
 
 function initWindows()
-   corniceImg=loadImage("cornice.png")
+   corniceImg=loadImage(IMAGES_FOLDER+"/cornice.png")
    if (corniceImg<1) then corniceImg=0
 endfunction
 
@@ -449,7 +449,7 @@ function menuBox2(menuX# as float, menuY# as float,caption$ as string,choice1$ a
    totalHeight# as float 
    pointerX# as float
    pointerY# as float
-   if (getImageExists(corniceImg)=0) then loadImage("cornice.PNG")
+   if (getImageExists(corniceImg)=0) then loadImage(IMAGES_FOLDER+"/cornice.png")
    menuBackSpriteId=createSprite(corniceImg)
    text1Id=createText(choice1$)
    text2Id=createText(choice2$)
