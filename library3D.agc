@@ -52,6 +52,8 @@
 #constant CAT_LIFT 17
 #constant CAT_TANK 18
 #constant CAT_FLYING 19
+#constant CAT_VEHICLE 20
+
 
 #constant DARKBLUE 0x0000A0
 #constant BLUE 0x0000FF
@@ -96,6 +98,7 @@ global terrainAGK_index as integer
 global bullet_index as integer
 global weapon_index as integer
 global hand_index as integer
+global vehicle_index as integer
 
 global move_fwd_flag as integer
 
@@ -653,9 +656,12 @@ function populateOggetto3D(obj3D ref as Oggetto3D,tipo as string, value as strin
 		case 'weaponTextureFile'
 		    obj3D.weaponTextureFile=value
 		endcase	
-		case 'weaponTextureD'
+		case 'weaponTextureID'
 		    obj3D.weaponTextureID=val(value)
-		endcase	
+		endcase
+		case 'textureID'
+		    obj3D.textureID=val(value)
+		endcase		
 		case 'tiled'
 		    obj3D.tiled=val(value)
 		endcase
@@ -765,6 +771,9 @@ function populateOggetto3D(obj3D ref as Oggetto3D,tipo as string, value as strin
 				endcase
 				case "FLYING"
 				   obj3D.category=CAT_FLYING
+				endcase
+				case "VEHICLE"
+				   obj3D.category=CAT_VEHICLE
 				endcase
 				case "BLOCK"
 				   obj3D.category=CAT_BLOCK
@@ -1073,6 +1082,7 @@ function createObjects(jsonFile as string)
 	weapon_index=findObjectByName(oggetti3D,oggetti3D[fps_index].weapon)
 	oggetti3D[weapon_index].status=STATUS_IDLE
 	hand_index=findObjectByName(oggetti3D,"hand")
+	vehicle_index=findObjectByName(oggetti3D,"vehicle")
 	DeleteSprite(advanceBarSpriteID)
 	DeleteText(advanceBarTextID)
 	deleteBackImage()
@@ -1081,17 +1091,22 @@ endfunction 0
 
 function deleteObjectTextures()
 	i as integer
+	c as integer
 	for i=0 to oggetti3D.length
 		if (GetImageExists(oggetti3D[i].textureID)=1)
 			DeleteImage(oggetti3D[i].textureID)
+			inc c
 		endif
 		if (GetImageExists(oggetti3D[i].detailTextureID)=1)
 			DeleteImage(oggetti3D[i].detailTextureID)
+			inc c
 		endif
 		if (GetImageExists(oggetti3D[i].weaponTextureID)=1)
 			DeleteImage(oggetti3D[i].weaponTextureID)
+			inc c
 		endif	
 	next i
+	//print("") : print_debug("texture deleted:"+str(c))
 endfunction		
 
 function createTileShader(tile_x as float, tile_y as float)
@@ -1282,6 +1297,7 @@ function createTerrainMap(terrainMapFile as string, terrainAltitudeFile as strin
 					repetitions1=max2(lenWallX,lenWallY)
 					repetitions2=(lenWallX+lenWallY)/2
 				endif 
+				populateOggetto3D(newObject,"textureID",str(textureID))
 				remstart
 				textureIndex=texturePlaneWidth
 				if (wallTextures[textureIndex]=0)
@@ -2670,12 +2686,10 @@ function checkEnemyCollision(enemyObj ref as Oggetto3D)
 	raycast_cat as integer
 	angleOffset=0
 	if (enemyObj.flip=1) then angleOffset=180 
-	//startCheckPos.y=getFloor(enemyObj.x,enemyObj.z)+1
-	startCheckPos.z=enemyObj.z+cos(enemyObj.angle_y-angleOffset)*2
+	startCheckPos.x=enemyObj.z+sin(enemyObj.angle_y-angleOffset)*3
+	startCheckPos.z=enemyObj.z+cos(enemyObj.angle_y-angleOffset)*3
 	startCheckPos.y=enemyObj.y+2
 	endCheckPos.x=startCheckPos.x+sin(enemyObj.angle_y-angleOffset)*5
-	//endCheckPos.y=enemyObj.y
-	//endCheckPos.y=1
 	endCheckPos.z=startCheckPos.z+cos(enemyObj.angle_y-angleOffset)*5
 	endCheckPos.y=startCheckPos.y
 	sx=startCheckPos.x

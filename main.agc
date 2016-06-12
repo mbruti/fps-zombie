@@ -19,7 +19,7 @@
 #include "misc.agc"
 #include "map.agc"
 #include "highscore.agc"
-SetErrorMode(0)
+SetErrorMode(1)
 devType=GetDeviceType()
 isPC=0
 if (strbegins(devType,"xp")=1) or (strbegins(devType,"7")=1) or (strbegins(devType,"8")=1) or (strbegins(devType,"10")=1)  then isPC=1
@@ -33,7 +33,7 @@ initWorld3D(200,1000,200)
 SetOrientationAllowed( 0, 0, 1, 1 )
 initGame()
 SetGlobal3DDepth(0)
-showIntro()
+//showIntro()
 SetGlobal3DDepth(10000)
 loadLocalHi()
 mainMenu()
@@ -106,9 +106,11 @@ do
 		deleteHUDSprites()
 		if (oggetti3D[fps_index].status<>STATUS_BACK_TO_MENU)
 			pausetime(2)
-			doUnlockWorld(world)
 			showGameOver3D()
-			manageNewHi(score,world)
+			if (world<>TRAINING_LEVEL)
+				doUnlockWorld(world)
+				manageNewHi(score,world)
+			endif	
 			messageBox(SCREEN2D_WIDTH/2,SCREEN2D_HEIGHT-172,"Press ok to return to main menu.",32)
 		endif	
 		deleteEverything()
@@ -150,7 +152,8 @@ function startGame()
 	flag as integer
 	score=0
 	resetGlobals()
-    world=chosenWorld
+    //world=chosenWorld
+    world=16
     loadWorld(world)
     startGameTimer=Timer()
 	showScreen()

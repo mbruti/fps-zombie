@@ -10,17 +10,6 @@
 		"yStep":"0",
 		"speed":"2"
 	},
-	"armygun" : {
-		"category":"gun",
-		"seqNum":"21",
-		"ammo":"500",
-		"atlas":"inventory",
-		"available":"0",
-		"range":"0",
-		"trajectory":"straight",
-		"yStep":"0",
-		"speed":"10"
-	},
 	"knife" : {
 		"category":"knife",
 		"seqNum":"24",
@@ -30,17 +19,6 @@
 		"range":"10",
 		"trajectory":"straight",
 		"yStep":"0",
-		"speed":"1"
-	},
-	"bomb" : {
-		"category":"bomb",
-		"seqNum":"8",
-		"atlas":"inventory",
-		"ammo":"50",
-		"available":"0",
-		"range":"80",
-		"trajectory":"parabolic",
-		"yStep":"1",
 		"speed":"1"
 	},
 	"life" : {

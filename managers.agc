@@ -235,12 +235,17 @@ function positionFPSManager()
 	positionObject3D(oggetti3D[fps_index])
 	positionObject3D(oggetti3D[weapon_index])
 	clonePosRot3D(oggetti3D[weapon_index],oggetti3D[hand_index])
+	clonePosRot3D(oggetti3D[fps_index],oggetti3D[vehicle_index])
 	positionObject3D(oggetti3D[hand_index])
+	positionObject3D(oggetti3D[vehicle_index])
 	moveZObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_z)
 	moveXObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_x)
 	moveYObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_y)
 	moveYObject3D(oggetti3D[hand_index],0.5*sin(angle_hand)+1)
 	moveYObject3D(oggetti3D[weapon_index],0.5*sin(angle_hand)+2)
+	moveZObject3D(oggetti3D[vehicle_index],oggetti3D[vehicle_index].hand_offset_z)
+	moveXObject3D(oggetti3D[vehicle_index],oggetti3D[vehicle_index].hand_offset_x)
+	moveYObject3D(oggetti3D[vehicle_index],oggetti3D[vehicle_index].hand_offset_y)
 	if (oggetti3D[fps_index].status<>STATUS_FPS_DYING) and (oggetti3D[fps_index].status<>STATUS_GAME_OVER) 
 	   positionMainCameraBehind3D(oggetti3D[fps_index])
 	endif   
@@ -317,7 +322,11 @@ function levelChangeManager()
 		endif
 	next i
 	if 	(numLiveEnemies=0) 
-		oggetti3D[fps_index].status=STATUS_CHANGE_LEVEL
+		if (world=TRAINING_LEVEL)
+			oggetti3D[fps_index].status=STATUS_GAME_OVER
+		else	
+			oggetti3D[fps_index].status=STATUS_CHANGE_LEVEL
+		endif	
 	endif
 endfunction
 

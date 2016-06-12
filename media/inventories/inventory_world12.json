@@ -1,15 +1,15 @@
 [
-	"armygun" : {
+	"bazooka" : {
 		"category":"gun",
-		"seqNum":"21",
-		"ammo":"500",
+		"seqNum":"0",
+		"ammo":"100",
 		"atlas":"inventory",
 		"available":"0",
-		"range":"400",
+		"range":"200",
 		"trajectory":"straight",
 		"yStep":"0",
-		"speed":"5"
-	}
+		"speed":"2"
+	},
 	"knife" : {
 		"category":"knife",
 		"seqNum":"24",

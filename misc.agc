@@ -19,7 +19,9 @@ function checkLevels()
 	SetFolder(WORLDS_FOLDER)
 	nextFile=GetFirstFile()	
 	while (nextFile<>"")
-		worldList.insert(nextFile)
+		if (FindString(nextFile,"world"+str(TRAINING_LEVEL))=0)
+			worldList.insert(nextFile)
+		endif	
 		nextFile=GetNextFile()
 	endwhile	
 	worldList.insert(unlockWorld)

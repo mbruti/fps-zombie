@@ -34,13 +34,6 @@
 		"atlas":"inventory",
 		"ammo":"0",
 		"available":"1"
-	},
-	"key" : {
-		"category":"key",
-		"seqNum":"28",
-		"atlas":"inventory",
-		"ammo":"0",
-		"available":"0"
 	}
 ]
 		

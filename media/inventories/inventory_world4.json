@@ -10,16 +10,16 @@
 		"yStep":"0",
 		"speed":"2"
 	},
-	"armygun" : {
-		"category":"gun",
-		"seqNum":"21",
-		"ammo":"500",
+	"bomb" : {
+		"category":"bomb",
+		"seqNum":"8",
 		"atlas":"inventory",
+		"ammo":"50",
 		"available":"0",
-		"range":"0",
-		"trajectory":"straight",
-		"yStep":"0",
-		"speed":"10"
+		"range":"80",
+		"trajectory":"parabolic",
+		"yStep":"1",
+		"speed":"1"
 	},
 	"life" : {
 		"category":"life",

@@ -1,5 +1,5 @@
-global menuItems as string[6] = ["SINGLE PLAYER","CHOOSE WORLD","HOST A GAME", "JOIN A GAME","HI LOCAL","HI GLOBAL","QUIT"]
-global menuItemsText as integer[6]
+global menuItems as string[7] = ["SINGLE PLAYER","CHOOSE WORLD","TRAINING","HOST A GAME", "JOIN A GAME","HI LOCAL","HI GLOBAL","QUIT"]
+global menuItemsText as integer[7]
 global modeItems as string[1] = ["VS MODE","COOPERATIVE MODE"]
 global modeItemsText as integer[1]
 
@@ -144,11 +144,11 @@ function mainMenu()
 			menuItemsText[i]=CreateText(menuItems[i])
 			SetTextSize(menuItemsText[i],72)
 			SetTextAlignment(menuItemsText[i],1)
-			SetTextPosition(menuItemsText[i],SCREEN2D_WIDTH/2,80*(i+1))
+			SetTextPosition(menuItemsText[i],SCREEN2D_WIDTH/2,64+80*i)
 			SetTextColor(menuItemsText[i],GetColorRed3D(RED),GetColorGreen3D(RED),GetColorBlue3D(RED),255)
 			sync()
 		next i
-		chosenWorldText=printText(SCREEN2D_WIDTH/2,SCREEN2D_HEIGHT-128, "Current world:"+str(chosenWorld), 72, 1)
+		chosenWorldText=printText(SCREEN2D_WIDTH/2,SCREEN2D_HEIGHT-96, "Current world:"+str(chosenWorld), 72, 1)
 		SetTextColor(chosenWorldText,GetColorRed3D(YELLOW),GetColorGreen3D(YELLOW),GetColorBlue3D(YELLOW),255)
 		menuChoice=chooseMenuItem(menuItems,menuItemsText,menuItems.length)	
 		select menuChoice
@@ -160,19 +160,23 @@ function mainMenu()
 				chosenWorld=chooseWorld()
 				isMultiPlayerLAN=0	
 				pauseTime(0.1)
-			endcase	
+			endcase
 			case 2
+				isMultiPlayerLAN=0
+				chosenWorld=TRAINING_LEVEL
+			endcase
+			case 3
 				chooseMode()
 				networkID=hostGameLAN()
 			endcase
-			case 3
+			case 4
 				networkID=joinGameLAN()
 			endcase
-			case 4
+			case 5
 				displayHi(hi_local)
 				pauseTime(0.1)		
 			endcase
-			case 5
+			case 6
 				if (loadGlobalHi()=0)
 					displayHi(hi_global)
 					pauseTime(0.1)
@@ -180,11 +184,11 @@ function mainMenu()
 					messageBox(SCREEN2D_WIDTH/2,SCREEN2D_HEIGHT/2,"Sorry, no Internet connection...",48)
 				endif				
 			endcase
-			case 6
+			case 7
 				end
 			endcase	
 		endselect
-	until (menuChoice<>1) and (menuChoice<>4) and (menuChoice<>5) 			
+	until (menuChoice<>1) and (menuChoice<>5) and (menuChoice<>6) 			
 endfunction
 
 function chooseWorld()

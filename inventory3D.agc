@@ -8,6 +8,7 @@
 #constant CAT_INV_MEDIKIT	4
 #constant CAT_INV_KEY	5
 
+
 global inventory as Inventario3D[]
 global inventoryAtlasImageID as integer
 global inventoryImageID as integer[]

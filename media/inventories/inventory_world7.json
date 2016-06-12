@@ -1,14 +1,14 @@
 [
-	"armygun" : {
+	"gun" : {
 		"category":"gun",
-		"seqNum":"21",
-		"ammo":"100",
+		"seqNum":"23",
 		"atlas":"inventory",
+		"ammo":"500",
 		"available":"0",
-		"range":"0",
+		"range":"100",
 		"trajectory":"straight",
 		"yStep":"0",
-		"speed":"10"
+		"speed":"2"
 	},
 	"knife" : {
 		"category":"knife",
@@ -34,9 +34,23 @@
 		"atlas":"inventory",
 		"ammo":"0",
 		"available":"1"
+	},
+	"key" : {
+		"category":"key",
+		"seqNum":"28",
+		"atlas":"inventory",
+		"ammo":"0",
+		"available":"0"
+	},
+	"armygun" : {
+		"category":"gun",
+		"seqNum":"21",
+		"ammo":"500",
+		"atlas":"inventory",
+		"available":"0",
+		"range":"0",
+		"trajectory":"straight",
+		"yStep":"0",
+		"speed":"10"
 	}
-]
-		
-		
-		
-		
+]	

@@ -1,11 +1,11 @@
 [
-	"bazooka" : {
+	"gun" : {
 		"category":"gun",
-		"seqNum":"0",
-		"ammo":"100",
+		"seqNum":"23",
 		"atlas":"inventory",
+		"ammo":"500",
 		"available":"0",
-		"range":"200",
+		"range":"100",
 		"trajectory":"straight",
 		"yStep":"0",
 		"speed":"2"
@@ -36,7 +36,3 @@
 		"available":"1"
 	}
 ]
-		
-		
-		
-		

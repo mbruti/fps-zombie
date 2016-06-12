@@ -6,11 +6,13 @@
 #constant FONTS_FOLDER "/media/fonts"
 #constant MAPS_FOLDER "/media/maps"
 
-#constant APP_VERSION_STRING "Call of Zombie (v2.0.6) (c)2015-2016 Texasoft Reloaded"
+#constant APP_VERSION_STRING "Call of Zombie (v2.0.7) (c)2015-2016 Texasoft Reloaded"
 
 #constant INTERNET_HOST "agkappmarket.altervista.org"
 
-#constant NUM_WORLDS 16
+#constant NUM_WORLDS 15
+
+#constant TRAINING_LEVEL 0
 
 global appVersionText as integer
 
