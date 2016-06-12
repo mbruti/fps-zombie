@@ -1057,8 +1057,8 @@ function createObjects(jsonFile as string)
 	advanceBarSpriteID=CreateSprite(0)
 	SetSpriteColor(advanceBarSpriteID,128,0,0,255)
 	SetSpritePosition(advanceBarSpriteID,SCREEN2D_WIDTH/2-400,SCREEN2D_HEIGHT/2+256)
-	firstCatObjFilename.length=0
-	firstCatObjID.length=0
+	firstCatObjFilename.length=-1
+	firstCatObjID.length=-1
 	for i=0 to numObjs
 		backImageScroll(0)
 		createOggetto3D(oggetti3D[i])		
@@ -1078,6 +1078,21 @@ function createObjects(jsonFile as string)
 	deleteBackImage()
 	//listObjects(oggetti3D)
 endfunction 0
+
+function deleteObjectTextures()
+	i as integer
+	for i=0 to oggetti3D.length
+		if (GetImageExists(oggetti3D[i].textureID)=1)
+			DeleteImage(oggetti3D[i].textureID)
+		endif
+		if (GetImageExists(oggetti3D[i].detailTextureID)=1)
+			DeleteImage(oggetti3D[i].detailTextureID)
+		endif
+		if (GetImageExists(oggetti3D[i].weaponTextureID)=1)
+			DeleteImage(oggetti3D[i].weaponTextureID)
+		endif	
+	next i
+endfunction		
 
 function createTileShader(tile_x as float, tile_y as float)
 	tileShader as integer
@@ -3309,7 +3324,7 @@ function deleteEverything()
 	deleteMapSprites()
 	DeleteAllObjects()
 	DeleteAllText()
-	//DeleteAllImages()
+	DeleteObjectTextures()
 	for i=1 to AGK_NUM_VIRTUAL_BUTTONS
 		if (GetVirtualButtonExists(i)) then DeleteVirtualButton(i)
 	next i
@@ -3326,6 +3341,7 @@ function deleteEverythingButTheText()
 	deleteHUDSprites()
 	deleteMapSprites()
 	DeleteAllObjects()
+	DeleteObjectTextures()
 	for i=1 to AGK_NUM_VIRTUAL_BUTTONS
 		if (GetVirtualButtonExists(i)) then DeleteVirtualButton(i)
 	next i

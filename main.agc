@@ -19,7 +19,7 @@
 #include "misc.agc"
 #include "map.agc"
 #include "highscore.agc"
-
+SetErrorMode(0)
 devType=GetDeviceType()
 isPC=0
 if (strbegins(devType,"xp")=1) or (strbegins(devType,"7")=1) or (strbegins(devType,"8")=1) or (strbegins(devType,"10")=1)  then isPC=1

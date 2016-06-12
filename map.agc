@@ -4,7 +4,7 @@ type mapTargetType
 endtype 	
 global mapTarget as mapTargetType[]
 function clearMap()
-	mapTarget.length=0
+	mapTarget.length=-1
 endfunction	
 function displayMap()
 	i as integer

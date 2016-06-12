@@ -68,7 +68,7 @@ function stopLoopingSounds(deleteFlag as integer)
 			endcase
 		endselect
 	next i			
-	if (deleteFlag=1) then sounds.length=0	
+	if (deleteFlag=1) then sounds.length=-1	
 endfunction
 	
 function getSound()
