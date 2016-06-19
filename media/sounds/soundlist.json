@@ -10,7 +10,9 @@
 		"ak47":"ak47.wav",
 		"zombie":"zombie.wav",
 		"tank":"tank.wav",	
-		"laser":"laser.wav"
+		"laser":"laser.wav",
+		"engine":"engine.wav",
+		"lowengine":"lowengine.wav"
 	},
 	"music":{
 		"fightscene":"fightscene.mp3"

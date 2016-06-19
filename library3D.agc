@@ -27,6 +27,8 @@
 #constant TERRAIN_SIN 1
 #constant TERRAIN_MAP 2
 #constant TERRAIN_AGK 3
+#constant TERRAIN_SEA 4
+
 
 #constant AI_CHASE 1
 #constant AI_ESCAPE 2
@@ -41,18 +43,20 @@
 #constant CAT_TERRAIN_SIN 6
 #constant CAT_TERRAIN_MAP 7
 #constant CAT_TERRAIN_AGK 8
-#constant CAT_SKY 9
-#constant CAT_BULLET 10
-#constant CAT_PICKUP 11
-#constant CAT_PLAYER 12
-#constant CAT_STAIRS 13
-#constant CAT_VERTICAL_STAIRS 14
-#constant CAT_HAND 15
-#constant CAT_VERTICAL_DOORS 16
-#constant CAT_LIFT 17
-#constant CAT_TANK 18
-#constant CAT_FLYING 19
-#constant CAT_VEHICLE 20
+#constant CAT_TERRAIN_SEA 9
+#constant CAT_SKY 10
+#constant CAT_BULLET 11
+#constant CAT_PICKUP 12
+#constant CAT_PLAYER 13
+#constant CAT_STAIRS 14
+#constant CAT_VERTICAL_STAIRS 15
+#constant CAT_HAND 16
+#constant CAT_VERTICAL_DOORS 17
+#constant CAT_LIFT 18
+#constant CAT_TANK 19
+#constant CAT_FLYING 20
+#constant CAT_VEHICLE 21
+#constant CAT_SEA_MONSTER 22
 
 
 #constant DARKBLUE 0x0000A0
@@ -95,10 +99,19 @@ global hitTop as integer
 
 global fps_index as integer
 global terrainAGK_index as integer
+global terrain_category as integer
+global terrain_sea_index as integer
 global bullet_index as integer
 global weapon_index as integer
 global hand_index as integer
 global vehicle_index as integer
+global vehicle_thrust_on as integer
+
+global thrust_timer as float
+
+global sea_UV_offset as float
+
+global sea_monster_diving_angle as float
 
 global move_fwd_flag as integer
 
@@ -249,6 +262,9 @@ endfunction vectorLength
 function terrain3DGenerator(terrainType as integer,terrainID as integer, param as float)
 	select terrainType
 		case TERRAIN_FLAT
+			terrainFlatGenerator(param)
+		endcase	
+		case TERRAIN_SEA
 			terrainFlatGenerator(param)
 		endcase	
 		case TERRAIN_SIN
@@ -781,6 +797,9 @@ function populateOggetto3D(obj3D ref as Oggetto3D,tipo as string, value as strin
 				case "TERRAIN_FLAT"
 				   obj3D.category=CAT_TERRAIN_FLAT
 				endcase
+				case "TERRAIN_SEA"
+				   obj3D.category=CAT_TERRAIN_SEA
+				endcase
 				case "TERRAIN_SIN"
 				   obj3D.category=CAT_TERRAIN_SIN
 				endcase
@@ -816,6 +835,9 @@ function populateOggetto3D(obj3D ref as Oggetto3D,tipo as string, value as strin
 				endcase
 				case "LIFT"
 				   obj3D.category=CAT_LIFT
+				endcase
+				case "SEA_MONSTER"
+				   obj3D.category=CAT_SEA_MONSTER
 				endcase
 			endselect	   
 		endcase		
@@ -932,8 +954,9 @@ function createOggetto3D(obj ref as Oggetto3D)
 		   endif	   
 	    endcase
 	    case "terrain"
-	       select obj.category
-			   case CAT_TERRAIN_FLAT 
+		   terrain_category=obj.category
+	       select terrain_category
+			   case CAT_TERRAIN_FLAT
 		          obj.ID=CreateObjectPlane(obj.width,obj.height)
 	              SetObjectLightMode(obj.ID,0)
 	              if (obj.textureFile<>"") 
@@ -944,6 +967,19 @@ function createOggetto3D(obj ref as Oggetto3D)
 					 SetObjectShader(obj.ID,createTileShader(20.0,20.0))
 			      endif
 			      terrain3DGenerator(TERRAIN_FLAT,obj.ID,obj.depth)
+			   endcase
+			   case CAT_TERRAIN_SEA 
+		          obj.ID=CreateObjectPlane(obj.width,obj.height)
+	              SetObjectLightMode(obj.ID,0)
+	              if (obj.textureFile<>"") 
+			         obj.textureID=LoadImage(obj.textureFile)
+			         SetImageWrapU( obj.textureID,1)
+					 SetImageWrapV( obj.textureID,1)
+			         SetObjectImage(obj.ID,obj.textureID,0)
+			         sea_UV_offset=0
+					 SetObjectShader(obj.ID,createTileShader(20.0,20.0))
+			      endif
+			      terrain3DGenerator(TERRAIN_SEA,obj.ID,obj.depth)
 			   endcase
 			   case CAT_TERRAIN_SIN 
 			      terrain3DGenerator(TERRAIN_SIN,obj.ID,obj.depth)
@@ -1045,6 +1081,8 @@ function createObjects(jsonFile as string)
 	advanceBarUnit as float
 	oggetti3D.length=-1
 	terrainAGK_index=-1
+	terrain_sea_index=-1
+	vehicle_index=-1
 	fps_index=-1
 	SetFolder(WORLDS_FOLDER)
 	if (parse3DJSON(oggetti3D,jsonFile)=-1) 
@@ -1075,6 +1113,8 @@ function createObjects(jsonFile as string)
 			fps_index=i
 		elseif (oggetti3D[i].category=CAT_TERRAIN_AGK)
 			terrainAGK_index=i
+		elseif (oggetti3D[i].category=CAT_TERRAIN_SEA)
+			terrain_sea_index=i	
 		endif   
 		SetSpriteSize(advanceBarSpriteID,(i+1)*advanceBarUnit,64)
 		sync()
@@ -1083,6 +1123,9 @@ function createObjects(jsonFile as string)
 	oggetti3D[weapon_index].status=STATUS_IDLE
 	hand_index=findObjectByName(oggetti3D,"hand")
 	vehicle_index=findObjectByName(oggetti3D,"vehicle")
+	if (vehicle_index>=0) 
+		vehicle_thrust_on=0
+	endif	
 	DeleteSprite(advanceBarSpriteID)
 	DeleteText(advanceBarTextID)
 	deleteBackImage()
@@ -1560,7 +1603,7 @@ function checkObstacleOnDirection(objs3D ref as Oggetto3D[], i as integer, new_a
 			if (objs3D[i].ID=objs3D[hitObjIndex].ID) then exitfunction 0
 			raycast_cat=objs3D[hitObjIndex].category
 			rem print_debug("ostacolo direzione "+str(oggetti3D[hitObjIndex].ID))
-			if (raycast_cat=CAT_BLOCK) or (raycast_cat=CAT_SKY) or (raycast_cat=CAT_STAIRS) or (raycast_cat=CAT_VERTICAL_STAIRS) or (raycast_cat=CAT_BULLET) or (raycast_cat=CAT_VERTICAL_DOORS) or (raycast_cat=CAT_TANK) or (raycast_cat=CAT_ENEMY) 
+			if (raycast_cat=CAT_BLOCK) or (raycast_cat=CAT_SKY) or (raycast_cat=CAT_STAIRS) or (raycast_cat=CAT_VERTICAL_STAIRS) or (raycast_cat=CAT_BULLET) or (raycast_cat=CAT_VERTICAL_DOORS) or (raycast_cat=CAT_TANK) or (raycast_cat=CAT_ENEMY)
 				exitfunction 1
 			endif	
 		endif		 
@@ -1707,7 +1750,7 @@ function objectManager()
 		updateObjFlag=0
 		if (i=weapon_index) 
 		   if (oggetti3D[i].status<>STATUS_WEAPON_FIRE)
-	          oggetti3D[i].y=oggetti3D[fps_index].y+1	
+			  oggetti3D[i].y=oggetti3D[fps_index].y+1	
 	          oggetti3D[i].z=oggetti3D[fps_index].z+3*sin(oggetti3D[fps_index].angle_y)
 	          oggetti3D[i].x=oggetti3D[fps_index].x-3*cos(oggetti3D[fps_index].angle_y)
 	       endif
@@ -1748,7 +1791,7 @@ function objectManager()
 				endif		
 			endcase	
 			case STATUS_ACTIVE
-				if (isMultiPlayerLAN=0) or (isHostLAN=1) or ((oggetti3D[i].category<>CAT_ENEMY) and (oggetti3D[i].category<>CAT_TANK) and (oggetti3D[i].category<>CAT_FLYING))  
+				if (isMultiPlayerLAN=0) or (isHostLAN=1) or ((oggetti3D[i].category<>CAT_ENEMY) and (oggetti3D[i].category<>CAT_TANK) and (oggetti3D[i].category<>CAT_FLYING) and (oggetti3D[i].category<>CAT_SEA_MONSTER))  
 						if (abs(oggetti3D[i].moveStep)>0.001) and (oggetti3D[i].turningFlag=0)
 							if (oggetti3D[i].flip=1) 
 								forwardStep=-oggetti3D[i].moveStep
@@ -1841,7 +1884,12 @@ function objectManager()
 							//print("")
 							//print("altitudine "+str(oggetti3D[i].altitude))
 							//print("y "+str(oggetti3D[i].y))
-						endcase	
+						endcase
+						case CAT_SEA_MONSTER	
+							oggetti3D[i].y=-oggetti3D[i].base_y+sin(sea_monster_diving_angle)
+							positionObject3D(oggetti3D[i])
+							sea_monster_diving_angle=wrapValue(sea_monster_diving_angle+1)
+						endcase
 						case default	
 							if (oggetti3D[i].onObject=-1)
 								oggetti3D[i].y=getFloor(oggetti3D[i].x,oggetti3D[i].z,i)-oggetti3D[i].base_y
@@ -1849,14 +1897,14 @@ function objectManager()
 							endif	
 						endcase  	  
 					endselect
-					if ((oggetti3D[i].category<>CAT_ENEMY) and (oggetti3D[i].category<>CAT_TANK) and (oggetti3D[i].category<>CAT_FLYING)) or (((oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING)) and (oggetti3D[i].hittingPlayer=0))
+					if ((oggetti3D[i].category<>CAT_ENEMY) and (oggetti3D[i].category<>CAT_TANK) and (oggetti3D[i].category<>CAT_FLYING)) or (((oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING) or (oggetti3D[i].category=CAT_SEA_MONSTER)) and (oggetti3D[i].hittingPlayer=0))
 						moveZObject3D(oggetti3D[i],forwardStep)
 					endif				
 					if (oggetti3D[i].ai>0) and (oggetti3D[i].hittingPlayer=0)
 						rem print("new_angle_y "+str(oggetti3D[i].newAngleY))
 						select oggetti3D[i].ai
 							case AI_AVOID_OBSTACLES
-								if (oggetti3D[i].category<>CAT_FLYING) then checkTerrainOnPath(oggetti3D,i)
+								if (oggetti3D[i].category<>CAT_FLYING) and (oggetti3D[i].category<>CAT_SEA_MONSTER) then checkTerrainOnPath(oggetti3D,i)
 								if (oggetti3D[i].turningFlag=0)
 									if (random2(1,100)<=1)
 										dvx=getDistanceVectorX(oggetti3D[fps_index].x,oggetti3D[fps_index].z,oggetti3D[i].x,oggetti3D[i].z)
@@ -2372,6 +2420,8 @@ function getAltitude(x as float, z as float)
 	if (terrainAGK_index=-1)
 		idx_x=trunc(index_x/10.0+0.5)+1
 		idx_z=trunc(index_z/10.0+0.5)+1
+		if (idx_x>TERRAIN_MAP_SIZE_X) then idx_x=TERRAIN_MAP_SIZE_X
+		if (idx_z>TERRAIN_MAP_SIZE_Z) then idx_z=TERRAIN_MAP_SIZE_Z
 		altitude=altitudeMap[idx_x,idx_z]*5
 		//print("x "+str(x)+" z "+str(z))
 		//print("index x "+str(index_x)+" index_z "+str(index_z))
@@ -2427,13 +2477,7 @@ function checkObjectsCollision()
 	for i=1 to oggetti3D.length
 		if (oggetti3D[i].status=STATUS_BOMB_EXPLOSION) or (oggetti3D[i].status=STATUS_ACTIVE) or (oggetti3D[i].status=STATUS_IDLE) or (oggetti3D[i].status=STATUS_OBSTACLE) or (oggetti3D[i].status=STATUS_CLIMBING)
 			select oggetti3D[i].category
-				case CAT_ENEMY, CAT_TANK, CAT_FLYING	
-					remstart
-					if (terrainAGK_index<>-1)
-						oggetti3D[i].y=getfloor(oggetti3D[i].x,oggetti3D[i].z)-oggetti3D[i].base_y+oggetti3D[i].altitude
-						positionObject3D(oggetti3D[i])
-					endif	
-					remend
+				case CAT_ENEMY, CAT_TANK, CAT_FLYING
 					floor_hit_index=checkFloorCollision(oggetti3D[i],0)	
 					oggetti3D[i].onObject=floor_hit_index	
 					remstart
@@ -2593,6 +2637,13 @@ function manageFPSCollision(hitObj ref as Oggetto3D)
 				manageSound(getSoundByName("zombie"))
 			endif	
 		endcase
+		case CAT_SEA_MONSTER
+			if (hitObj.status=STATUS_ACTIVE) or (hitObj.status=STATUS_FIRING)
+				hitPlayer(hitObj.damage)
+				oggetti3D[hitObjIndex].hittingPlayer=1
+				manageSound(getSoundByName("zombie"))
+			endif	
+		endcase
 		case CAT_TANK
 			if (hitObj.status=STATUS_ACTIVE) or (hitObj.status=STATUS_FIRING)
 				hitPlayer(hitObj.damage)
@@ -2705,7 +2756,7 @@ function checkEnemyCollision(enemyObj ref as Oggetto3D)
 		if (hitObjIndex<>-1) and (enemyObj.collisionFlag=0)
 			raycast_cat=oggetti3D[hitObjIndex].category
 			if (enemyObj.ID=oggetti3D[hitObjIndex].ID) then exitfunction 0
-			if (raycast_cat=CAT_BLOCK) or (raycast_cat=CAT_SKY) or (raycast_cat=CAT_STAIRS) or (raycast_cat=CAT_VERTICAL_STAIRS) or (raycast_cat=CAT_BULLET) or (raycast_cat=CAT_TANK) or (raycast_cat=CAT_ENEMY)
+			if (raycast_cat=CAT_BLOCK) or (raycast_cat=CAT_SKY) or (raycast_cat=CAT_STAIRS) or (raycast_cat=CAT_VERTICAL_STAIRS) or (raycast_cat=CAT_BULLET) or (raycast_cat=CAT_TANK) or (raycast_cat=CAT_ENEMY) or (raycast_cat=CAT_SEA_MONSTER)
 				// print_debug("enemy "+str(sy)+" "+str(enemyobj.ID)+"coll hitID "+str(hitObjID))
 				enemyObj.collisionFlag=hitObjID
 				enemyObj.status=STATUS_OBSTACLE
@@ -2786,6 +2837,7 @@ function checkEnemyFireCollision(enemyObj ref as Oggetto3D)
 	targetID as integer
 	angleOffset as float
 	hitObjID as integer
+	hitTargetFlag as integer
 	hitObjIndex as integer
 	startCheckPos as Vector3D
 	endCheckPos as Vector3D
@@ -2806,13 +2858,12 @@ function checkEnemyFireCollision(enemyObj ref as Oggetto3D)
 	ez=endCheckPos.z
 	//DrawLine(GetScreenXFrom3D(sx,sy,sz),GetScreenYFrom3D(sx,sy,sz),GetScreenXFrom3D(ex,ey,ez),GetScreenYFrom3D(ex,ey,ez),255,0,0)
 	hitObjID=checkSlideCollision(0,startCheckPos,endCheckPos,2)
-	remstart
-	print("")
-	print("checkenemyfirecollision hitObjID "+str(hitObjID))
-	print("targetFireID "+str(enemyObj.targetFireID))
-	remend
-	if (hitObjID<>0)
-		if (hitObjID=enemyObj.targetFireID)
+	hitTargetFlag=checkSlideCollision(enemyObj.targetFireID,startCheckPos,endCheckPos,2)
+	//print("")
+	//print("checkenemyfirecollision hitObjID "+str(hitObjID))
+	//print("targetFireID "+str(enemyObj.targetFireID))
+	if (hitObjID<>0) or (hitTargetFlag<>0)
+		if (hitTargetFlag=1)
 			//print("hitplayer")
 			hitPlayer(enemyObj.fireDamage)
 		else	

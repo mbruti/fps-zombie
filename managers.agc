@@ -39,10 +39,15 @@ function controlManager()
 			   endif      
 		   elseif (hitWallFront=0) and (hitWallFrontLow=0)
 			    if (oggetti3D[fps_index].moveStep<0) or (oggetti3D[fps_index].moveStep=0)
-					moveZObject3D(oggetti3D[fps_index],-moveAmount)
-					oggetti3D[fps_index].moveStep=-moveAmount
+					moveZObject3D(oggetti3D[fps_index],-moveAmount*(1+vehicle_thrust_on))
+					oggetti3D[fps_index].moveStep=-moveAmount*(1+vehicle_thrust_on)
 				endif	
 		   endif
+		   if (terrain_sea_index<>-1) and (vehicle_thrust_on=0)
+			   if (GetSoundsPlaying(getSoundByName("lowengine"))=0)
+				   PlaySound(getSoundByName("lowengine"))
+			   endif
+		   endif	   	   
 		endcase
 		case "DOWN"
 		     angle_hand=mod(angle_hand+8,360)	
@@ -53,7 +58,12 @@ function controlManager()
 					moveZObject3D(oggetti3D[fps_index],moveAmount/4)
 					oggetti3D[fps_index].moveStep=moveAmount
 				 endif	
-			endif		
+			endif	
+			if (terrain_sea_index<>-1) and (vehicle_thrust_on=0)
+			   if (GetSoundsPlaying(getSoundByName("lowengine"))=0)
+				   PlaySound(getSoundByName("lowengine"))
+			   endif
+		   endif	
 		endcase
 		case "LEFT"	
 		   rotateObject3D(oggetti3D[fps_index],0,-moveAmount*2,0)
@@ -74,6 +84,11 @@ function controlManager()
 		   endif
 		   rotateObject3D(oggetti3D[fps_index],0,-moveAmount*2,0)
 		   rotateObject3D(oggetti3D[weapon_index],0,-moveAmount*2,0)
+		   if (terrain_sea_index<>-1) and (vehicle_thrust_on=0)
+			   if (GetSoundsPlaying(getSoundByName("lowengine"))=0)
+				   PlaySound(getSoundByName("lowengine"))
+			   endif
+		   endif
 		   //RotateObjectLocalY(oggetti3D[weapon_index].ID,-moveAmount*2)
 		   //updatePosRot3D(oggetti3D[weapon_index])
 		endcase
@@ -84,6 +99,11 @@ function controlManager()
 		   endif	   
 		   rotateObject3D(oggetti3D[fps_index],0,moveAmount*2,0)
 		   rotateObject3D(oggetti3D[weapon_index],0,moveAmount*2,0)
+		   if (terrain_sea_index<>-1) and (vehicle_thrust_on=0)
+			   if (GetSoundsPlaying(getSoundByName("lowengine"))=0)
+				   PlaySound(getSoundByName("lowengine"))
+			   endif
+		   endif
 		   //RotateObjectLocalY(oggetti3D[weapon_index].ID,moveAmount*2)
 		   //updatePosRot3D(oggetti3D[weapon_index])
 		endcase
@@ -93,6 +113,11 @@ function controlManager()
 		   endif	   
 		   rotateObject3D(oggetti3D[fps_index],0,moveAmount*2,0)
 		   rotateObject3D(oggetti3D[weapon_index],0,moveAmount*2,0)
+		   if (terrain_sea_index<>-1) and (vehicle_thrust_on=0)
+			   if (GetSoundsPlaying(getSoundByName("lowengine"))=0)
+				   PlaySound(getSoundByName("lowengine"))
+			   endif
+		   endif
 		   //RotateObjectLocalY(oggetti3D[weapon_index].ID,moveAmount*2)
 		   //updatePosRot3D(oggetti3D[weapon_index])
 		endcase	
@@ -102,6 +127,11 @@ function controlManager()
 		   endif	   
 		   rotateObject3D(oggetti3D[fps_index],0,-moveAmount*2,0)
 		   rotateObject3D(oggetti3D[weapon_index],0,-moveAmount*2,0)
+		   if (terrain_sea_index<>-1) and (vehicle_thrust_on=0)
+			   if (GetSoundsPlaying(getSoundByName("lowengine"))=0)
+				   PlaySound(getSoundByName("lowengine"))
+			   endif
+		   endif
 		   //RotateObjectLocalY(oggetti3D[weapon_index].ID,-moveAmount*2)
 		   //updatePosRot3D(oggetti3D[weapon_index])
 		endcase	
@@ -132,21 +162,30 @@ function controlManager()
 				SetObjectVisible(oggetti3D[bullet_index].ID,0)
 			endif	
 			oggetti3D[bullet_index].weapon=oggetti3D[fps_index].weapon
-			angle_y_fire=oggetti3D[weapon_index].angle_y_fire
-			RotateObjectLocalY(oggetti3D[weapon_index].ID,oggetti3D[weapon_index].angle_y_fire)
-			RotateObjectLocalX(oggetti3D[weapon_index].ID,oggetti3D[weapon_index].angle_x_fire)
-			rem MoveObjectLocalZ(oggetti3D[weapon_index].ID,5)
-			updatePosRot3D(oggetti3D[weapon_index])
-			oggetti3D[weapon_index].status=STATUS_WEAPON_FIRE
+			if (terrain_sea_index=-1)
+				angle_y_fire=oggetti3D[weapon_index].angle_y_fire
+				RotateObjectLocalY(oggetti3D[weapon_index].ID,oggetti3D[weapon_index].angle_y_fire)
+				RotateObjectLocalX(oggetti3D[weapon_index].ID,oggetti3D[weapon_index].angle_x_fire)
+				rem MoveObjectLocalZ(oggetti3D[weapon_index].ID,5)
+				updatePosRot3D(oggetti3D[weapon_index])
+				oggetti3D[weapon_index].status=STATUS_WEAPON_FIRE
+			endif
 			i=inventory[selected_inventory_index].category
 			Playsound(getSound())
 		 endif
-	elseif (inputButton=2) and (oggetti3D[fps_index].status=STATUS_IDLE) and (jumping_flag=0) and (fallCounter=0)
-		jumping_flag=1
-		start_jump_y=oggetti3D[fps_index].y	 	
-		end_jump_y=start_jump_y+9
-		jump_direction=0.3
-		PlaySound(getSoundByName("jump"))
+	elseif (inputButton=2) and (oggetti3D[fps_index].status=STATUS_IDLE)
+		if (vehicle_index=-1) and (jumping_flag=0) and (fallCounter=0)
+			jumping_flag=1
+			start_jump_y=oggetti3D[fps_index].y	 	
+			end_jump_y=start_jump_y+9
+			jump_direction=0.3
+			PlaySound(getSoundByName("jump"))
+		elseif (vehicle_thrust_on=0) and (vehicle_index>=0)
+			vehicle_thrust_on=1
+			SetVirtualButtonText(2,"GOING")
+			PlaySound(getSoundByName("engine"))
+			thrust_timer=timer()
+		endif		
 	elseif (inputButton=3) and (oggetti3D[fps_index].status=STATUS_IDLE)
 		cam_angle_xy=cam_angle_xy-1
 		if (cam_angle_xy<-45) then cam_angle_xy=-45
@@ -233,19 +272,23 @@ endfunction
 function positionFPSManager()
 	i as integer
 	positionObject3D(oggetti3D[fps_index])
+	if (vehicle_index>=0)
+		clonePosRot3D(oggetti3D[fps_index],oggetti3D[vehicle_index])
+		positionObject3D(oggetti3D[vehicle_index])
+	endif
 	positionObject3D(oggetti3D[weapon_index])
 	clonePosRot3D(oggetti3D[weapon_index],oggetti3D[hand_index])
-	clonePosRot3D(oggetti3D[fps_index],oggetti3D[vehicle_index])
 	positionObject3D(oggetti3D[hand_index])
-	positionObject3D(oggetti3D[vehicle_index])
-	moveZObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_z)
-	moveXObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_x)
-	moveYObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_y)
-	moveYObject3D(oggetti3D[hand_index],0.5*sin(angle_hand)+1)
-	moveYObject3D(oggetti3D[weapon_index],0.5*sin(angle_hand)+2)
-	moveZObject3D(oggetti3D[vehicle_index],oggetti3D[vehicle_index].hand_offset_z)
-	moveXObject3D(oggetti3D[vehicle_index],oggetti3D[vehicle_index].hand_offset_x)
-	moveYObject3D(oggetti3D[vehicle_index],oggetti3D[vehicle_index].hand_offset_y)
+	if (vehicle_index=-1)
+		moveZObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_z)
+		moveXObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_x)
+		moveYObject3D(oggetti3D[hand_index],oggetti3D[weapon_index].hand_offset_y)
+		moveYObject3D(oggetti3D[hand_index],0.5*sin(angle_hand)+1)
+		moveYObject3D(oggetti3D[weapon_index],0.5*sin(angle_hand)+2)
+	else
+		moveYObject3D(oggetti3D[weapon_index],2.4)
+		moveXObject3D(oggetti3D[weapon_index],3.2)
+	endif		
 	if (oggetti3D[fps_index].status<>STATUS_FPS_DYING) and (oggetti3D[fps_index].status<>STATUS_GAME_OVER) 
 	   positionMainCameraBehind3D(oggetti3D[fps_index])
 	endif   
@@ -317,7 +360,7 @@ function levelChangeManager()
 	i as integer
 	numLiveEnemies=0
 	for i=0 to oggetti3D.length
-		if ((oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING)) and (oggetti3D[i].status<>STATUS_HIDDEN) 
+		if ((oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING)) and (oggetti3D[i].status<>STATUS_HIDDEN) and (oggetti3D[i].category<>CAT_SEA_MONSTER)
 			inc numLiveEnemies
 		endif
 	next i
@@ -341,6 +384,23 @@ function explosionManager()
 		endif
 	next i
 endfunction				
+
+function terrainSeaManager()
+	if (terrain_sea_index<>-1)
+		sea_UV_offset=sea_UV_offset+0.001
+		if (sea_UV_offset>360) then sea_UV_offset=0
+		SetObjectUVOffset(oggetti3D[terrain_sea_index].ID, 0,cos(sea_UV_offset),sin(sea_UV_offset))
+	endif
+endfunction		
+
+function vehicleManager()
+	if (vehicle_thrust_on=1)
+		if ((timer()-thrust_timer)>2) 
+			vehicle_thrust_on=0
+			SetVirtualButtonText(2,"ENG.ON")
+		endif
+	endif		
+endfunction	
 		
 function gameLoop3D()
 	frameManager()
@@ -355,6 +415,8 @@ function gameLoop3D()
 	timeManager()
 	levelChangeManager()	
 	explosionManager()
+	vehicleManager()
+	terrainSeaManager()
 endfunction    
 
 function checkFallCounter()

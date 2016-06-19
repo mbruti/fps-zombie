@@ -179,7 +179,7 @@
 		"objectType":"obj",
 		"textureFile":"zombie_tex.jpg",
 		"status":"ACTIVE",
-		"moveStep":"0.02",
+		"moveStep":"0.1",
 		"rotateStep":"0",
 		"collision":"1",
 		"postFALLING":"ENDING",

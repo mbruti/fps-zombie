@@ -28,7 +28,7 @@ function displayMap()
 		SetSpriteSize(mapSprite,TERRAIN_SIZE_X/2,TERRAIN_SIZE_Z/2)
 		SetSpritePosition(mapSprite,0,32)
 		for i=0 to oggetti3D.length
-			if (oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING) or ((oggetti3D[i].category=CAT_PLAYER) and (isMultiPlayerLAN=1)) or (oggetti3D[i].category=CAT_GHOST) 
+			if (oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING) or ((oggetti3D[i].category=CAT_PLAYER) and (isMultiPlayerLAN=1)) or (oggetti3D[i].category=CAT_GHOST) or (oggetti3D[i].category=CAT_SEA_MONSTER)
 				newMapTarget.index=i
 				newMapTarget.ID=createSprite(0)
 				setSpriteSize(newMapTarget.ID,8,8)
@@ -48,6 +48,9 @@ function displayMap()
 					endcase	
 					case CAT_PLAYER
 						SetSpriteColor(newMapTarget.ID,0,0,255,255)
+					endcase	
+					case CAT_SEA_MONSTER
+						SetSpriteColor(newMapTarget.ID,128,0,128,255)
 					endcase	
 				endselect
 				mapTarget.insert(newMapTarget)

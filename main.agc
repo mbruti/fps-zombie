@@ -19,7 +19,7 @@
 #include "misc.agc"
 #include "map.agc"
 #include "highscore.agc"
-SetErrorMode(1)
+SetErrorMode(0)
 devType=GetDeviceType()
 isPC=0
 if (strbegins(devType,"xp")=1) or (strbegins(devType,"7")=1) or (strbegins(devType,"8")=1) or (strbegins(devType,"10")=1)  then isPC=1
@@ -33,7 +33,7 @@ initWorld3D(200,1000,200)
 SetOrientationAllowed( 0, 0, 1, 1 )
 initGame()
 SetGlobal3DDepth(0)
-//showIntro()
+showIntro()
 SetGlobal3DDepth(10000)
 loadLocalHi()
 mainMenu()
@@ -52,28 +52,25 @@ do
 		//print("zmb x="+str(oggetti3D[9].x)+" z="+str(oggetti3D[9].z)+" y="+str(oggetti3D[9].y))
 		//print("zmb x="+str(oggetti3D[10].x)+" z="+str(oggetti3D[10].z)+" y="+str(oggetti3D[10].y))
 		//print(GetWritePath())
-		remstart
-		print("ZOMBIE status "+str(oggetti3D[3].status)) 
-		print("ZOMBIE y "+str(oggetti3D[3].y)) 
-		print("ZOMBIE checknormal "+str(checkNormal3D(8,5,0))) 
-		print(str(chosenWorld))
-		print(str(oggetti3D[weapon_index].x)+" "+str(oggetti3D[weapon_index].y)+" "+str(oggetti3D[weapon_index].z))
-		print("bullet "+str(oggetti3D[bullet_index].angle_x)+" "+str(oggetti3D[bullet_index].angle_y)+" "+str(oggetti3D[bullet_index].angle_z)) 
-		print("fps "+str(oggetti3D[fps_index].angle_x)+" "+str(oggetti3D[fps_index].angle_y)+" "+str(oggetti3D[fps_index].angle_z))
-		print("weapon "+str(oggetti3D[weapon_index].angle_x)+" "+str(oggetti3D[weapon_index].angle_y)+" "+str(oggetti3D[weapon_index].angle_z))
-		printNetworkClients(networkID)
-		sendNetworkFPSPosition(networkID)
-		getNetworkFPSPosition(networkID)
-		print("status bullet="+str(oggetti3D[bullet_index].status))
-		print("status fps="+str(oggetti3D[fps_index].status))
-		print("status weapon="+str(oggetti3D[weapon_index].status))
-		print("status turning flag="+str(oggetti3D[5].turningFlag))
-		Print("")
-		print("on object "+str(oggetti3D[fps_index].onObject))
-		if (oggetti3D[fps_index].onObject>-1) 
-		   print("category on object "+str(oggetti3D[oggetti3D[fps_index].onObject].category))
-		endif
-		remend
+		//print("ZOMBIE status "+str(oggetti3D[3].status)) 
+		//print("ZOMBIE y "+str(oggetti3D[3].y)) 
+		//print("ZOMBIE checknormal "+str(checkNormal3D(8,5,0))) 
+		//print(str(chosenWorld))
+		//print(str(oggetti3D[weapon_index].x)+" "+str(oggetti3D[weapon_index].y)+" "+str(oggetti3D[weapon_index].z))
+		//print("bullet "+str(oggetti3D[bullet_index].angle_x)+" "+str(oggetti3D[bullet_index].angle_y)+" "+str(oggetti3D[bullet_index].angle_z)) 
+		//print("fps "+str(oggetti3D[fps_index].angle_x)+" "+str(oggetti3D[fps_index].angle_y)+" "+str(oggetti3D[fps_index].angle_z))
+		//printNetworkClients(networkID)
+		//sendNetworkFPSPosition(networkID)
+		//getNetworkFPSPosition(networkID)
+		//print("status bullet="+str(oggetti3D[bullet_index].status))
+		//print("status fps="+str(oggetti3D[fps_index].status))
+		//print("status weapon="+str(oggetti3D[weapon_index].status))
+		//print("status turning flag="+str(oggetti3D[5].turningFlag))
+		//Print("")
+		//print("on object "+str(oggetti3D[fps_index].onObject))
+		//if (oggetti3D[fps_index].onObject>-1) 
+		 //  print("category on object "+str(oggetti3D[oggetti3D[fps_index].onObject].category))
+		//endif
 		//print("")
 		//print(str(getFloor(oggetti3D[fps_index].x,oggetti3D[fps_index].z)))
 		//print(str(terrain3D[round(oggetti3D[fps_index].x)+205,round(oggetti3D[fps_index].z)+205]))
@@ -152,8 +149,7 @@ function startGame()
 	flag as integer
 	score=0
 	resetGlobals()
-    //world=chosenWorld
-    world=16
+    world=chosenWorld
     loadWorld(world)
     startGameTimer=Timer()
 	showScreen()
@@ -179,10 +175,14 @@ function showScreen()
 	showObjects()
 	positionMainCameraBehind3D(oggetti3D[fps_index])
     createVirtualJoystick(1,64,736)
-    createVirtualButton(2,1216,736,128,"JUMP")
+    if (vehicle_index>=0)
+		createVirtualButton(2,1216,736,128,"ENG.ON")
+	else	
+		createVirtualButton(2,1216,736,128,"JUMP")
+	endif
     createVirtualButton(1,1088,736,128,"FIRE")
     createVirtualButton(3,240,736,128,"UP")
-    createVirtualButton(4,380,736,128,"DOWN")
+	createVirtualButton(4,380,736,128,"DOWN")
     mirinoSprite=CreateSprite(mirinoImage)
     SetSpriteOffset(mirinoSprite,GetImageWidth(mirinoImage)/2,GetImageHeight(mirinoImage)/2)
     SetSpritePositionByOffset(mirinoSprite,GetScreenXFrom3D(oggetti3D[fps_index].x,oggetti3D[fps_index].y,oggetti3D[fps_index].z-60),

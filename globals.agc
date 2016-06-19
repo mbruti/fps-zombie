@@ -10,7 +10,7 @@
 
 #constant INTERNET_HOST "agkappmarket.altervista.org"
 
-#constant NUM_WORLDS 15
+#constant NUM_WORLDS 16
 
 #constant TRAINING_LEVEL 0
 
