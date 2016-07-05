@@ -13,6 +13,7 @@ function showLogo3D()
 	texasoftString as string = "TEXASOFT RELOADED STUDIOS"
 	texasoftTextID as integer
  	i as integer
+ 	j as integer
  	SetGlobal3DDepth(0)
 	sun3D=CreateObjectSphere(15,20,20)
 	CreatePointLight(2,15,10,10,1000,255,255,0)
@@ -77,6 +78,9 @@ function showLogo3D()
 		SetTextPosition(texasoftTextID,SCREEN2D_WIDTH/2,vy)
 		SetTextColor(texasoftTextID,i,255-i,255-i,i)
 		SetObjectRotation(sun3D,0,GetObjectAngleY(sun3D)+1,0)
+		for j=1 to 5
+			SetSpriteColor(starSprites[random2(1,80)],random2(64,255), random2(64,255),0,255)
+		next j
 		pausetime(0.01)
 	next i	
 	pauseClickTime(10)

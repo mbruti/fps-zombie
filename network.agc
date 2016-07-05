@@ -63,7 +63,7 @@ function hostGameLAN()
 		sync()	
 	until joinFlag=1
 	repeat
-		backImageScroll(0.005)	
+		backImageScroll(0.005)
 		sync()
 	until (GetNetworkNextClient(netID)=0)	
 	DeleteText(txtId)

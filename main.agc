@@ -27,7 +27,7 @@ SetSyncRate(60,0)
 SetWindowTitle( "fps-zombie" )
 SetWindowSize( 640, 480, 0 )
 //set display properties
-SetVirtualResolution( 1280, 800 )
+SetVirtualResolution( VIRTUAL_RES_X, VIRTUAL_RES_Y )
 initWindows()
 initWorld3D(200,1000,200)
 SetOrientationAllowed( 0, 0, 1, 1 )
@@ -43,6 +43,8 @@ do
 	SetControlsVisible(1)
 	repeat  
 		//print("")
+		//print("altitude "+str(getAltitude(oggetti3D[6].x,oggetti3D[6].z))+" getfloor "+str(getFloor(oggetti3D[6].x,oggetti3D[6].z,-1)))
+		//print("y "+str(oggetti3D[6].y))
 		//print("height "+str(GetObjectHeightMapHeight(oggetti3D[terrainAGK_index].ID,oggetti3D[fps_index].x,oggetti3D[fps_index].z)))
 		//print(str(oggetti3D[12].angle_y))
 		//print(str(GetObjectNumBones(oggetti3D[6].ID)))

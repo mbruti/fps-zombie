@@ -235,7 +235,7 @@ function inputNewInitials()
 		endif	
 		randomAngle=random(30,150)
 		DrawLine(SCREEN2D_WIDTH/2,0,SCREEN2D_WIDTH/2+SCREEN2D_HEIGHT/tan(randomAngle),SCREEN2D_HEIGHT,random(0,255),random(0,255),random(0,255))
-		backImageScroll(0.005)	
+		backImageScroll(0.005)
 		sync()
 	endwhile
 	DeleteVirtualButton(1)

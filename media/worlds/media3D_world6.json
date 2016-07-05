@@ -153,9 +153,9 @@
 		"flip":"1",
     	"category":"ENEMY",
 		"energy":"200",
-		"infoText":"Energy",
+		"infoText":"Energy6",
 		"damage":"1",
-		"fireDamage":"2",
+		"fireDamage":"1",
 		"fireDuration":"1",
 		"canFire":"1",
 		"weaponBoneName":"gun",
@@ -163,7 +163,7 @@
 		"bodyBoneName":"soldier",
 		"animACTIVE":"0,40",
 		"animFALLING":"40,60",
-		"maxSlope":"5"
+		"maxSlope":"-1"
 	},
 	"soldier_enemy_2" : {
 	    "animated":"1",
@@ -194,15 +194,15 @@
 		"energy":"200",
 		"infoText":"Energy",
 		"damage":"1",
-		"fireDamage":"2",
-		"fireDuration":"2",
+		"fireDamage":"1",
+		"fireDuration":"1",
 		"canFire":"1",
 		"weaponBoneName":"gun",
 		"weaponTextureFile":"armygun_tex.png",
 		"bodyBoneName":"soldier",
 		"animACTIVE":"0,40",
 		"animFALLING":"40,60",
-		"maxSlope":"5"
+		"maxSlope":"-1"
 	},	
 	"soldier_enemy_3" : {
 	    "animated":"1",
@@ -233,7 +233,7 @@
 		"energy":"200",
 		"infoText":"Energy",
 		"damage":"1",
-		"fireDamage":"2",
+		"fireDamage":"1",
 		"fireDuration":"1",
 		"canFire":"1",
 		"weaponBoneName":"gun",
@@ -241,7 +241,7 @@
 		"bodyBoneName":"soldier",
 		"animACTIVE":"0,40",
 		"animFALLING":"40,60",
-		"maxSlope":"5"
+		"maxSlope":"-1"
 	},
 	"soldier_enemy_4" : {
 	    "animated":"1",
@@ -272,15 +272,15 @@
 		"energy":"200",
 		"infoText":"Energy",
 		"damage":"1",
-		"fireDamage":"2",
-		"fireDuration":"2",
+		"fireDamage":"1",
+		"fireDuration":"1",
 		"canFire":"1",
 		"weaponBoneName":"gun",
 		"weaponTextureFile":"armygun_tex.png",
 		"bodyBoneName":"soldier",
 		"animACTIVE":"0,40",
 		"animFALLING":"40,60",
-		"maxSlope":"5"
+		"maxSlope":"-1"
 	},
 	"soldier_enemy_5" : {
 	    "animated":"1",
@@ -311,7 +311,7 @@
 		"energy":"200",
 		"infoText":"Energy",
 		"damage":"1",
-		"fireDamage":"2",
+		"fireDamage":"1",
 		"fireDuration":"1",
 		"canFire":"1",
 		"weaponBoneName":"gun",
@@ -319,7 +319,7 @@
 		"bodyBoneName":"soldier",
 		"animACTIVE":"0,40",
 		"animFALLING":"40,60",
-		"maxSlope":"5"
+		"maxSlope":"-1"
 	},
 	"soldier_enemy_6" : {
 	    "animated":"1",
@@ -350,7 +350,7 @@
 		"energy":"200",
 		"infoText":"Energy",
 		"damage":"1",
-		"fireDamage":"2",
+		"fireDamage":"1",
 		"fireDuration":"2",
 		"canFire":"1",
 		"weaponBoneName":"gun",
@@ -358,7 +358,7 @@
 		"bodyBoneName":"soldier",
 		"animACTIVE":"0,40",
 		"animFALLING":"40,60",
-		"maxSlope":"5"
+		"maxSlope":"-1"
 	},
 	"bullet" : {
 		"x":"0",

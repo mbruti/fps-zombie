@@ -79,8 +79,7 @@ function chooseMenuItem(mItems as string[],mItemsText as integer[],unlock as int
 					SetTextColor(mItemsText[i],GetColorRed3D(DARKRED),GetColorGreen3D(DARKRED),GetColorBlue3D(DARKRED),255)
 				endif		
 			next
-			rem print(str(menuChoice))
-			backImageScroll(0.003)
+			backImageScroll(0.005)
 			sync()
 		endwhile		
 		xPressed=GetPointerX()
@@ -106,6 +105,7 @@ function backImageScroll(speed as float)
 		zombieBackgroundSprite=CreateSprite(zombieBackgroundImage)
 		SetSpriteDepth(zombieBackgroundSprite,10000)
 		SetSpritePosition(zombieBackgroundSprite,0,0)
+		SetSpriteSize(zombieBackgroundSprite,VIRTUAL_RES_X	,VIRTUAL_RES_Y)
 		backgroundTimer=timer()
 		backgroundUV=0
 		scaleUV=1

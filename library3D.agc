@@ -119,6 +119,8 @@ global angle_y_fire as float
 
 global cam_angle_xy as float
 
+global changeRouteTimer as float
+
 type Oggetto3D
 	fps as integer
 	name as string
@@ -1623,17 +1625,20 @@ function turnObject3D(i as integer)
 	updatePosRot3D(oggetti3D[i])
 endfunction
 
-rem retVal=0 if no collision, 1 if left collision, 2 if right collision, 3 if both collision
+rem retVal=0 if no collision, 1 if left collision, 2 if right collision, 3 if both collision,10-11-12-13 for no forward collision
 function checkNormal3D(i as integer, range as float, offset_y as float)
 	current_angle_y as float
+	startCheckPosFwd as Vector3D
 	startCheckPosRight as Vector3D
 	startCheckPosLeft as Vector3D
+	endCheckPosFwd as Vector3D
 	endCheckPosRight as Vector3D
 	endCheckPosLeft as Vector3D
 	retVal as integer
 	hitObjID as integer
 	angleOffset as float
 	angleOffset=180
+	if (oggetti3D[i].flip=0) then angleOffset=0
 	retVal=0
 	current_angle_y=GetObjectAngleY(oggetti3D[i].ID)
 	startCheckPosRight.x=oggetti3D[i].x+sin(oggetti3D[i].angle_y-angleOffset+90)
@@ -1642,18 +1647,27 @@ function checkNormal3D(i as integer, range as float, offset_y as float)
 	startCheckPosLeft.x=oggetti3D[i].x+sin(oggetti3D[i].angle_y-angleOffset-90)
 	startCheckPosLeft.y=oggetti3D[i].y+offset_y
 	startCheckPosLeft.z=oggetti3D[i].z+cos(oggetti3D[i].angle_y-angleOffset-90)
+	//startCheckPosFwd.x=oggetti3D[i].x+sin(oggetti3D[i].angle_y-angleOffset)*3
+	//startCheckPosFwd.y=oggetti3D[i].y+offset_y
+	//startCheckPosFwd.z=oggetti3D[i].z+cos(oggetti3D[i].angle_y-angleOffset)*3
 	endCheckPosRight.x=startCheckPosRight.x+sin(oggetti3D[i].angle_y-angleOffset+90)*range
 	endCheckPosRight.y=oggetti3D[i].y+offset_y
 	endCheckPosRight.z=startCheckPosRight.z+cos(oggetti3D[i].angle_y-angleOffset+90)*range
 	endCheckPosLeft.x=startCheckPosLeft.x+sin(oggetti3D[i].angle_y-angleOffset-90)*range
 	endCheckPosLeft.y=oggetti3D[i].y+offset_y
 	endCheckPosLeft.z=startCheckPosLeft.z+cos(oggetti3D[i].angle_y-angleOffset-90)*range
+	//endCheckPosFwd.x=startCheckPosFwd.x+sin(oggetti3D[i].angle_y-angleOffset)*5
+	//endCheckPosFwd.y=oggetti3D[i].y+offset_y
+	//endCheckPosFwd.z=startCheckPosFwd.z+cos(oggetti3D[i].angle_y-angleOffset)*5
 	hitObjID=checkSphereCollision(0,startCheckPosLeft,endCheckPosLeft,1)
 	if 	(hitObjID<>0) then retVal=1
-	rem print("hitObjID Left "+str(hitObjID)+" "+str(findObjectByID(oggetti3D,hitObjID)))
+	// print("hitObjID Left "+str(hitObjID)+" "+str(findObjectByID(oggetti3D,hitObjID)))
 	hitObjID=checkSphereCollision(0,startCheckPosRight,endCheckPosRight,1)
-	rem print("hitObjID Right "+str(hitObjID)+" "+str(findObjectByID(oggetti3D,hitObjID)))
+	// print("hitObjID Right "+str(hitObjID)+" "+str(findObjectByID(oggetti3D,hitObjID)))
 	if 	(hitObjID<>0) then retVal=retVal+2
+	//hitObjID=checkSphereCollision(0,startCheckPosFwd,endCheckPosFwd,1)
+	// print("hitObjID Fwd "+str(hitObjID)+" "+str(findObjectByID(oggetti3D,hitObjID)))
+	//if (hitObjID=0) then retVal=retVal+10
 endfunction retVal
 
 function checkDown3D(i as integer, range as float, offset_y as float)
@@ -1674,6 +1688,7 @@ function checkDown3D(i as integer, range as float, offset_y as float)
 	retVal as integer
 	hitObjID as integer
 	hitNearFloor as integer
+	newY as float
 	angleOffset as float
 	angleOffset=180
 	retVal=1
@@ -1705,7 +1720,10 @@ function checkDown3D(i as integer, range as float, offset_y as float)
 	if ((currentFloorY>nearFloorY) and (terrainAGK_index=-1)) or ((hitNearFloor=-1) and (oggetti3D[i].onObject<>-1))
 		retVal=0	
 	elseif(oggetti3D[i].y<(currentFloorY-oggetti3D[i].base_y))
-		oggetti3D[i].y=currentFloorY-oggetti3D[i].base_y
+		newY=currentFloorY-oggetti3D[i].base_y
+		if (abs(oggetti3D[i].y-newY)<10) or (terrainAGK_index<>-1)
+			oggetti3D[i].y=currentFloorY-oggetti3D[i].base_y
+		endif	
 	endif	
 endfunction retVal
 
@@ -1740,6 +1758,7 @@ function objectManager()
 	bulletLifeIncrement as float
 	ufoLaserLength as float
 	targetFlyingAltitude as float
+	newY as float
 	for i=0 to oggetti3D.length
 		remstart
 		if (oggetti3D[i].canFire=1) and (oggetti3D[i].status<>STATUS_ACTIVE)
@@ -1892,8 +1911,11 @@ function objectManager()
 						endcase
 						case default	
 							if (oggetti3D[i].onObject=-1)
-								oggetti3D[i].y=getFloor(oggetti3D[i].x,oggetti3D[i].z,i)-oggetti3D[i].base_y
-								positionObject3D(oggetti3D[i])
+								newY=getFloor(oggetti3D[i].x,oggetti3D[i].z,i)-oggetti3D[i].base_y
+								if (abs(newY-oggetti3D[i].y)<10) or (terrainAGK_index<>-1)
+									oggetti3D[i].y=getFloor(oggetti3D[i].x,oggetti3D[i].z,i)-oggetti3D[i].base_y
+									positionObject3D(oggetti3D[i])
+								endif	
 							endif	
 						endcase  	  
 					endselect
@@ -2202,33 +2224,34 @@ function objectManager()
 				endselect	  
 			endcase 
 			case STATUS_CHANGEROUTE
-				if (isMultiPlayerLAN=0) or (isHostLAN=1) or (oggetti3D[i].category<>CAT_ENEMY)
-					if (oggetti3D[i].turningFlag=0)
-						normalFlag=checkNormal3D(i,5,2)
-						select normalFlag
-							case 0
-								oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+RandomSign(random(30,60)))
-								oggetti3D[i].turningFlag=1	
-							endcase
-							case 1
-								oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+random(30,60))
-								oggetti3D[i].turningFlag=1	
-							endcase	
-							case 2
-								oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y-random(30,60))
-								oggetti3D[i].turningFlag=1	
-							endcase	
-							case 3
-								oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+randomsign(random(60,120)))
-								oggetti3D[i].turningFlag=1	
-							endcase	
-						endselect	
-					endif	
-					select oggetti3D[i].postCHANGEROUTE
-					   case STATUS_ACTIVE
-							oggetti3D[i].status=STATUS_ACTIVE
-					   endcase
-					endselect   			 
+					if (isMultiPlayerLAN=0) or (isHostLAN=1) or (oggetti3D[i].category<>CAT_ENEMY)
+						if (oggetti3D[i].turningFlag=0)
+							normalFlag=checkNormal3D(i,5,2)
+							select normalFlag
+								case 0
+									//oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+RandomSign(random(30,60)))
+									//oggetti3D[i].turningFlag=1	
+								endcase
+								case 1
+									oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+random(30,60))
+									oggetti3D[i].turningFlag=1	
+								endcase	
+								case 2
+									oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y-random(30,60))
+									oggetti3D[i].turningFlag=1	
+								endcase	
+								case 3
+									oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+randomsign(random(60,120)))
+									oggetti3D[i].turningFlag=1	
+								endcase	
+							endselect	
+						endif	
+						select oggetti3D[i].postCHANGEROUTE
+						   case STATUS_ACTIVE
+								oggetti3D[i].status=STATUS_ACTIVE
+								changeRouteTimer=timer()
+						   endcase
+						endselect 	 
 				endif   
 			endcase 
 			case STATUS_OBSTACLE
@@ -2324,7 +2347,7 @@ function objectManager()
 	next
 	if (isMultiPlayerLAN=1) and (isHostLAN=1) and (mod(frameCounter,3)=0) 
 		for i=0 to oggetti3D.length
-			if (oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING) then sendNetworkEnemyPosition(networkID,i)
+			if (oggetti3D[i].category=CAT_ENEMY) or (oggetti3D[i].category=CAT_TANK) or (oggetti3D[i].category=CAT_FLYING) or (oggetti3D[i].category=CAT_SEA_MONSTER) then sendNetworkEnemyPosition(networkID,i)
 			if (oggetti3D[i].category=CAT_LIFT) then sendNetworkLiftPosition(networkID,i)
 		next i
 	endif	
@@ -2480,16 +2503,14 @@ function checkObjectsCollision()
 				case CAT_ENEMY, CAT_TANK, CAT_FLYING
 					floor_hit_index=checkFloorCollision(oggetti3D[i],0)	
 					oggetti3D[i].onObject=floor_hit_index	
-					remstart
-					if (i=8) 
-						print("onobject "+str(oggetti3D[i].onObject))
-						print("near_floor_hit_index "+str(near_floor_hit_index))
+					if ((timer()-changeRouteTimer)>3) or (terrain_sea_index<>-1) or (terrainAGK_index<>-1)
+						checkEnemyCollision(oggetti3D[i])
 					endif	
-					remend
-					checkEnemyCollision(oggetti3D[i])
-					if (oggetti3D[i].category<>CAT_FLYING) and (checkDown3D(i,2,0)=0) and (oggetti3D[i].turningFlag=0)
-						oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+180)
-						oggetti3D[i].turningFlag=1
+					if (oggetti3D[i].y<getAltitude(oggetti3D[i].x,oggetti3D[i].z)) or (oggetti3D[i].y>=GetFloor(oggetti3D[i].x,oggetti3D[i].z,-1))
+						if (oggetti3D[i].category<>CAT_FLYING) and (checkDown3D(i,2,0)=0) and (oggetti3D[i].turningFlag=0)
+							oggetti3D[i].newAngleY=wrapValue(oggetti3D[i].angle_y+180)
+							oggetti3D[i].turningFlag=1
+						endif
 					endif	
 				endcase
 				case CAT_BULLET
@@ -2545,12 +2566,7 @@ function checkObjectsCollision()
 							moveZObject3D(oggetti3D[i],1)
 							hitFloor=0
 	                 	endif	
-					endif		
-					//print("")
-					//print("hitWallFront "+str(hitWallFront)+" hitWallBack "+str(hitWallBack))
-					//print("hitwallfrontlow "+str(hitWallFrontLow))
-					//print("floor_hit_index "+str(floor_hit_index))
-					//print("top_hit_index "+str(top_hit_index))				 
+					endif					 
 					if  (hitWallFrontLow=1) and  (move_fwd_flag=1) and (oggetti3D[i].onObject<>-1)
 						if (oggetti3D[oggetti3D[i].onObject].category=CAT_STAIRS)
 							oggetti3D[i].y=oggetti3D[i].y+oggetti3D[oggetti3D[i].onObject].riser
@@ -2737,8 +2753,8 @@ function checkEnemyCollision(enemyObj ref as Oggetto3D)
 	raycast_cat as integer
 	angleOffset=0
 	if (enemyObj.flip=1) then angleOffset=180 
-	startCheckPos.x=enemyObj.z+sin(enemyObj.angle_y-angleOffset)*3
-	startCheckPos.z=enemyObj.z+cos(enemyObj.angle_y-angleOffset)*3
+	startCheckPos.x=enemyObj.z+sin(enemyObj.angle_y-angleOffset)*2
+	startCheckPos.z=enemyObj.z+cos(enemyObj.angle_y-angleOffset)*2
 	startCheckPos.y=enemyObj.y+2
 	endCheckPos.x=startCheckPos.x+sin(enemyObj.angle_y-angleOffset)*5
 	endCheckPos.z=startCheckPos.z+cos(enemyObj.angle_y-angleOffset)*5
@@ -2757,12 +2773,12 @@ function checkEnemyCollision(enemyObj ref as Oggetto3D)
 			raycast_cat=oggetti3D[hitObjIndex].category
 			if (enemyObj.ID=oggetti3D[hitObjIndex].ID) then exitfunction 0
 			if (raycast_cat=CAT_BLOCK) or (raycast_cat=CAT_SKY) or (raycast_cat=CAT_STAIRS) or (raycast_cat=CAT_VERTICAL_STAIRS) or (raycast_cat=CAT_BULLET) or (raycast_cat=CAT_TANK) or (raycast_cat=CAT_ENEMY) or (raycast_cat=CAT_SEA_MONSTER)
-				// print_debug("enemy "+str(sy)+" "+str(enemyobj.ID)+"coll hitID "+str(hitObjID))
+				//print("x"+str(sx)+" z"+str(sz)+" "+str(enemyobj.ID)+"coll hitID "+str(hitObjID))
 				enemyObj.collisionFlag=hitObjID
 				enemyObj.status=STATUS_OBSTACLE
-				enemyObj.x=GetObjectRayCastSlideX(0)
-				enemyObj.y=GetObjectRayCastSlideY(0)
-				enemyObj.z=GetObjectRayCastSlideZ(0)
+				enemyObj.x=GetObjectRayCastX(0)
+				enemyObj.y=GetObjectRayCastY(0)
+				enemyObj.z=GetObjectRayCastZ(0)
 				updatePosRot3D(enemyObj)
 				exitfunction 1
 			endif	
@@ -2843,6 +2859,10 @@ function checkEnemyFireCollision(enemyObj ref as Oggetto3D)
 	endCheckPos as Vector3D
 	raycast_cat as integer
 	angleOffset=0
+	if (abs(oggetti3D[fps_index].y-getWeaponBoneWorldCoordinate(enemyObj,1))>30) 
+		 enemyObj.collisionFlag=0
+		 exitfunction 0
+	endif	  
 	if (enemyObj.flip=1) then angleOffset=180 
 	startCheckPos.x=getWeaponBoneWorldCoordinate(enemyObj,0)
 	startCheckPos.y=oggetti3D[fps_index].y
